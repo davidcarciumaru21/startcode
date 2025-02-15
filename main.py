@@ -16,7 +16,7 @@ x = 1
 ev3.screen.draw_text(80, 50, str(x), Color.BLACK, None) 
 ev3.speaker.beep()
 senzorApasare = TouchSensor(Port.S3)
-runs = [run01, run02, run03, run04, run05, run06, run07, run08]
+runs = [run01]
 
 def update_screen(x):
     ev3.screen.clear()
@@ -35,4 +35,3 @@ while True:
     elif senzorApasare.pressed():
         run = runs[x - 1]
         run()   
-    frana()
