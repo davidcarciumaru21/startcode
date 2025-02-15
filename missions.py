@@ -19,4 +19,4 @@ nemo.d.settings(1000, 1000, 1000, 1000)
 #***********RUN-URILE***********
 
 def run01() -> None:
-    nemo.d.straight(400)
+    nemo.gotoGyro(1, 0.01, 0.1, 90)

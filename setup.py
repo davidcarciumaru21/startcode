@@ -101,6 +101,16 @@ class Robot:
     def drive(self, powerDr: int, powerSt: int) -> None:
         self.dr.run(powerDr)
         self.st.run(powerSt)
+    
+    def runDr(self, powerDr):
+        self.dr.run_until_stalled(powerDr)
+
+    def runSt(self, powerSt):
+        self.st.run_until_stalled(powerSt)
+
+    def driveUntilStalled(self, powerDr: int, powerSt: int) -> None:
+        _thread.start_new_thread(self.runDr, (powerDr,)) 
+        _thread.start_new_thread(self.runSt, (powerSt,)) 
 
     # ************ GYRO-ASSISTED MOVEMENT ************
     
@@ -116,7 +126,7 @@ class Robot:
             derivative = (error - previousError) / 0.01  
             output = Kp * error + Ki * integral + Kd * derivative  
 
-            self.drive(output, -output)
+            self.drive(-output, output)
 
             previousError = error
 

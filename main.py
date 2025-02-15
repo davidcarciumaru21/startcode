@@ -21,7 +21,19 @@ loger = DataLog('drAngle', 'stAngle', 'bratdrAngle', 'bratstAngle', 'voltage', '
 
 def logDataThread():  
     while True:
-        loger.log(nemo.dr.angle(), nemo.st.angle(), nemo.bratDr.angle(), nemo.bratSt.angle(), ev3.battery.voltage()/1000, nemo.gyro.angle(), nemo.touch.pressed())
+        try:
+            loger.log(
+                nemo.dr.angle(), 
+                nemo.st.angle(),  
+                nemo.bratDr.angle(),  
+                nemo.bratSt.angle(),  
+                ev3.battery.voltage() / 1000,  
+                nemo.gyro.angle(), 
+                nemo.touch.pressed() 
+            )
+        except:
+           break
+        
         wait(100)
        
 _thread.start_new_thread(logDataThread, ())
