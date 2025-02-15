@@ -10,6 +10,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 from missions import run01
 from setup import Robot
+from missions import nemo
 
 ev3 = EV3Brick()
 x = 1
@@ -34,4 +35,8 @@ while True:
         wait(100)
     elif senzorApasare.pressed():
         run = runs[x - 1]
-        run()   
+        run() 
+    print(nemo.d.dr.angle)
+    print(nemo.d.st.angle)
+    print(nemo.d.bratDr.angle)
+    print(nemo.d.bratSt.angle)
