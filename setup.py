@@ -1,5 +1,4 @@
 # ************ IMPORTS ************
-from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
@@ -13,10 +12,8 @@ from errors import *
 # ************ ROBOT CLASS ************
 class Robot:
     def __init__(self, WHEELDIAMETER: float, AXLETRACK: float) -> None:
-        # Initialize robot parameters
-        self.WHEELDIAMETER = WHEELDIAMETER
-        self.AXLETRACK = AXLETRACK
-        self.ev3 = EV3Brick()
+        self.WHEELDIAMETER = WHEELDIAMETER #! constanta. Nu o modifica!
+        self.AXLETRACK = AXLETRACK #! constanta. Nu o modifica!
 
         # Initialize motors
         self.leftMotor = self.initMotor(Port.B, "Left motor", Direction.COUNTERCLOCKWISE)
