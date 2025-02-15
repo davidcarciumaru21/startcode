@@ -1,3 +1,5 @@
+#!/usr/bin/env pybricks-micropython
+
 # ************ IMPORTS ************
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
@@ -16,8 +18,8 @@ class Robot:
         self.AXLETRACK = AXLETRACK #! constanta. Nu o modifica!
 
         # Initialize motors
-        self.leftMotor = self.initMotor(Port.B, "Left motor", Direction.COUNTERCLOCKWISE)
-        self.rightMotor = self.initMotor(Port.C, "Right motor", Direction.COUNTERCLOCKWISE)
+        self.st = self.initMotor(Port.B, "Left motor", Direction.CLOCKWISE)
+        self.dr = self.initMotor(Port.C, "Right motor", Direction.CLOCKWISE)
         self.bratSt = self.initMotor(Port.A, "Left arm motor")
         self.bratDr = self.initMotor(Port.D, "Right arm motor")
 
@@ -26,7 +28,7 @@ class Robot:
         self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
 
         # Initialize drive base
-        self.d = DriveBase(self.leftMotor, self.rightMotor, self.WHEELDIAMETER, self.AXLETRACK)
+        self.d = DriveBase(self.st, self.dr, self.WHEELDIAMETER, self.AXLETRACK)
 
         # Thread control locks
         self.lock0 = _thread.allocate_lock()
@@ -36,7 +38,7 @@ class Robot:
         self.threadStopFlag = False
 
         # List of motors for easy access
-        self.motorList = [self.left_motor, self.right_motor, self.left_arm_motor, self.right_arm_motor]
+        self.motorList = [self.st, self.dr, self.bratSt, self.bratDr]
 
     # ************ INITIALIZATION METHODS ************
     def initMotor(self, port: Port, name: str, direction=Direction.CLOCKWISE) -> Motor:
@@ -94,25 +96,29 @@ class Robot:
         with lock:
             motor.run_angle(speed, angle)
 
+    # ************ DRIVETRAIN MOVEMENT ************
+
+    def drive(self, powerDr: int, powerSt: int) -> None:
+        self.dr.run(powerDr)
+        self.st.run(powerSt)
+
     # ************ GYRO-ASSISTED MOVEMENT ************
-    def gyroGoto(self, target_angle: int, speed: int, timeout: int = 4000, spin_direction: int = 1) -> None:
-        """Turn the robot to a target angle using the gyro sensor."""
-        self.drive_base.stop()
-        timer = StopWatch()
+    
+    def gotoGyro(self, Kp: float, Ki: float, Kd: float, targetAngle: int, tolerance: int = 1) -> None:
+        previousError = 0
+        integral = 0
 
-        while timer.time() < timeout:
-            current_angle = self.gyro_sensor.angle()
-            if abs(target_angle - current_angle) <= 10:
+        while True:
+            currentAngle = self.gyro.angle()  
+            error = targetAngle - currentAngle
+            integral += error * 0.01  
+            
+            derivative = (error - previousError) / 0.01  
+            output = Kp * error + Ki * integral + Kd * derivative  
+
+            self.drive(output, -output)
+
+            previousError = error
+
+            if abs(error) <= tolerance:
                 break
-
-            direction = 1 if current_angle < target_angle else -1
-            self.left_motor.run(direction * speed)
-            self.right_motor.run(-direction * speed)
-
-            if timer.time() >= timeout:
-                print("Abandoning due to timeout")
-                self.hold_robot()
-                return
-
-        self.hold_robot()
-        self.drive_base.turn(target_angle - self.gyro_sensor.angle())
