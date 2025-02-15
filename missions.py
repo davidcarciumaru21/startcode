@@ -14,9 +14,9 @@ from setup import Robot
 #***********DECLARARE***********
 
 nemo = Robot(49.5, 113)
-nemo.d.settings(1000, 1000, 1000, 1000)
+nemo.d.settings(2000, 2000, 2000, 2000)
 
 #***********RUN-URILE***********
 
 def run01() -> None:
-    nemo.gotoGyro(1, 0.01, 0.1, 90)
+    pass

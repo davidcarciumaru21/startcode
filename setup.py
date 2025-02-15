@@ -24,8 +24,8 @@ class Robot:
         self.bratDr = self.initMotor(Port.D, "Right arm motor")
 
         # Initialize sensors
-        self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
-        self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
+        self.touch = self.initSensor(TouchSensor, Port.S1, "Touch sensor")
+        self.gyro = self.initSensor(GyroSensor, Port.S4, "Gyro sensor")
 
         # Initialize drive base
         self.d = DriveBase(self.st, self.dr, self.WHEELDIAMETER, self.AXLETRACK)
