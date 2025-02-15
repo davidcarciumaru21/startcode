@@ -17,15 +17,18 @@ class Robot:
         self.WHEELDIAMETER = WHEELDIAMETER #! constanta. Nu o modifica!
         self.AXLETRACK = AXLETRACK #! constanta. Nu o modifica!
 
-        # Initialize motors
-        self.st = self.initMotor(Port.B, "Left motor", Direction.CLOCKWISE)
-        self.dr = self.initMotor(Port.C, "Right motor", Direction.CLOCKWISE)
-        self.bratSt = self.initMotor(Port.A, "Left arm motor")
-        self.bratDr = self.initMotor(Port.D, "Right arm motor")
+        self.st = self.initMotor(Port.A, "Left motor", Direction.CLOCKWISE)
+        self.dr = self.initMotor(Port.D, "Right motor", Direction.CLOCKWISE)
+        self.bratSt = self.initMotor(Port.C, "Left arm motor")
+        self.bratDr = self.initMotor(Port.B, "Right arm motor")
 
         # Initialize sensors
-        self.touch = self.initSensor(TouchSensor, Port.S1, "Touch sensor")
-        self.gyro = self.initSensor(GyroSensor, Port.S4, "Gyro sensor")
+        self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
+        self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
+
+        # Initialize drive base
+        self.d = DriveBase(self.st, self.dr, self.WHEELDIAMETER, self.AXLETRACK)
+
 
         # Initialize drive base
         self.d = DriveBase(self.st, self.dr, self.WHEELDIAMETER, self.AXLETRACK)

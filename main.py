@@ -5,14 +5,14 @@ from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import TouchSensor
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
-from missions import run01
+from missions import run01, run02, run03
 from logger import startLogging 
 
 ev3 = EV3Brick()
 nemo = Robot(49.5, 113)
 
 counter = 1  
-runs = [run01]
+runs = [run01, run02, run03]
 
 startLogging()
 
