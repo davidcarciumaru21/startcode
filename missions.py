@@ -27,7 +27,7 @@ nemo01 = Robot(49.5, 115)
 nemo01.d.settings(2000, 2000, 2000, 2000)
 
 nemo02 = Robot(49.5, 115)
-nemo02.d.settings(2000, 2000, 2000, 2000)
+nemo02.d.settings(2000, 2000, 500, 500)
 
 nemo03 = Robot(49.5, 115)
 nemo03.d.settings(2000, 2000, 2000, 2000)
@@ -38,29 +38,60 @@ nemo04.d.settings(2000, 2000, 2000, 2000)
 # ************ RUNS ************
 
 def run01(): #colectare stanga
-    wait(200)
+    #nemo01.bratDr.run_angle(-1000, 200)
+    nemo01.d.straight(450)
+    nemo01.bratDr.run_angle(-150, 150)
+    #curba
+    nemo01.d.reset()
+    while nemo01.d.distance() > -400:
+        nemo01.d.drive(-300, 20)
+    nemo01.d.straight(-5)
+    nemo01.d.stop()
+    
+    
 
 def run02(): #recif, rechin, scubi
     wait(200)
-    nemo02.d.straight(660)
+    nemo02.d.turn(5)
+    nemo02.d.straight(670)
     wait(100)
-    nemo02.bratDr.run_angle(500, 250) #pozitie colectare scubi
+    nemo02.bratDr.run_angle(800, 260) #pozitie colectare scubi
     wait(100)
-    nemo02.d.turn(-90)
+    nemo02.d.turn(-95)
     wait(100)
-    nemo02.bratSt.run_angle(-200, 180) #brat jos sub recif
+    nemo02.bratSt.run_angle(600, 500) #brat jos sub recif
     
     
-    nemo02.d.straight(60) #la recif
-    nemo02.bratSt.run_angle(100, 170) #ridicare recif
-    #nemo02.bratSt.run_angle(-100, 30)
-    nemo02.bratDr.run_angle(-150, 80) #luat scubi
+    nemo02.d.straight(105) #la recif
+    nemo02.bratDr.run_angle(-150, 110) #luat scubi
+    #nemo02.d.straight(-5)
+    nemo02.d.turn(7)
+    nemo02.bratSt.run_angle(-400, 570) #ridicare recif
+    wait(100)
+    nemo02.bratSt.run_angle(200, 120)
+    
 
+    nemo02.d.straight(-90)
+    nemo02.d.turn(100)
+    nemo02.d.straight(70)
+    
+    #nemo02.d.turn(10)
+    #nemo02.d.straight(20)
+    nemo02.bratDr.run_angle(200, 140) #dus scubi
+    nemo02.d.straight(-40)
+    nemo02.d.turn(-10)
+    nemo02.d.straight(30)
+    nemo02.bratSt.run_angle(500, 500)
+    nemo02.bratDr.run_angle(500, 300)
+    wait(100)
+    nemo02.bratSt.run_angle(-500, 500)
+    nemo02.bratDr.run_angle(-500, 80)
+    nemo02.d.straight(-500)
+    
+    '''
+    nemo02.d.straight(-600)
+    
     nemo02.d.straight(-100)
-    nemo02.d.turn(95)
-    nemo02.d.straight(120)
-    nemo02.bratDr.run_angle(150, 80) #dus scubi
-    ''''nemo02.d.straight(-100)
     nemo02.d.turn(20)
     nemo02.d.straight(-700)
     nemo02.stopRobot()'''
@@ -85,7 +116,7 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     nemo04.d.straight(800)
     nemo04.d.turn(45)
 
-# ************ FOR EXPORT ************
+# Lista de run-uri pe care robotul le poate face
 
 run01Obj = Mission(run01, "nimic")
 run02Obj = Mission(run02, "recif, rechin")
