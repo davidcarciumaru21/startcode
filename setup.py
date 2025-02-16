@@ -36,6 +36,8 @@ class Robot:
         # Inițializarea senzorilor
         self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
         self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
+        self.touch = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
+        self.gyro = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")
 
         # Inițializarea bazei de mișcare
         self.d = DriveBase(
@@ -91,13 +93,6 @@ class Robot:
         """
         self.dr.stop()
         self.st.stop()
-
-    def stopDriveTrain(self) -> None:
-        """
-        Menține motoarele sasiului în poziție.
-        """
-        self.dr.hold()
-        self.st.hold()
 
     def driveToTarget(self, target: int, power: int) -> None:
         """
@@ -254,4 +249,32 @@ class Robot:
             previousAngle = self.gyro.angle()
             previousDistanceTravelled = self.dr.angle()  
 
-        self.stop()
+        self.stopRobot()
+
+        # ************ METHODS WITH COLOUR SENSORS ************
+
+        def followLine(self, colour: object, sensor: object, power: int, target: int) -> None:
+            initial = self.dr.angle()  # Salvează unghiul inițial al motorului (poziția de început)
+            
+            while True:
+                # Calculează distanța parcursă până acum
+                distanceTravelled = abs(self.dr.angle() - initial)
+                
+                # Oprește robotul dacă s-a parcurs distanța dorită
+                if distanceTravelled >= target:
+                    self.stop()  # Oprește robotul după ce s-a atins distanța țintă
+                    break
+                
+                detectedColor = sensor.color()  # Obține culoarea detectată de senzor
+                
+                if detectedColor == colour:
+                    # Dacă culoarea corectă este detectată, robotul merge înainte
+                    self.drive(power, power)
+                else:
+                    # Dacă culoarea nu este detectată, robotul caută linia
+                    self.drive(0, power)  # Se rotește spre dreapta
+                    
+                    # Verifică din nou culoarea după rotație
+                    detectedColor = sensor.color()
+                    if detectedColor != colour:
+                        self.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei

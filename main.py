@@ -45,6 +45,7 @@ updateScreen(counter)
 
 # Bucla principală a programului
 while True:
+    nemo.stopDriveTrain()
     logCounter()
     # Verificăm dacă butonul UP este apăsat
     if Button.UP in ev3.buttons.pressed():  
