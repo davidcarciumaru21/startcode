@@ -36,8 +36,8 @@ class Robot:
         # Inițializarea senzorilor
         self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
         self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
-        self.touch = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
-        self.gyro = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")
+        self.colourDr = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
+        self.colourSt = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")
 
         # Inițializarea bazei de mișcare
         self.d = DriveBase(
@@ -227,7 +227,7 @@ class Robot:
 
     def straightWithGyro(self, distance: int, power: int) -> None:
         """
-        Mărește distanța parcursă pe o linie dreaptă, corectând direcția cu ajutorul giroscopului.
+        Merge o distanța pe o linie dreaptă, corectând direcția cu ajutorul giroscopului.
         
         Parametri:
         - distance: distanța pe care robotul trebuie să o parcurgă (în unități corespunzătoare).
@@ -253,28 +253,92 @@ class Robot:
 
         # ************ METHODS WITH COLOUR SENSORS ************
 
-        def followLine(self, colour: object, sensor: object, power: int, target: int) -> None:
-            initial = self.dr.angle()  # Salvează unghiul inițial al motorului (poziția de început)
+    def followLine(self, colour: object, sensor: object, power: int, target: int) -> None:
+
+        """
+        Merge pe o linie, urmarind o anumita culoare de pe aceasta folosindu-se de sensorul de culoare
             
-            while True:
-                # Calculează distanța parcursă până acum
-                distanceTravelled = abs(self.dr.angle() - initial)
+        Parametri:
+        - colour: culoare pe care o cauta
+        - sensor: senzorul de culoare pe care vrem sa-l folosim
+        - power: viteza cu care sa mearga robotul
+        - target: pozitia la care vrem sa ajunga robotul
+        """
+
+        initial = self.dr.angle()  # Salvează unghiul inițial al motorului (poziția de început)
+        
+        while True:
+            # Calculează distanța parcursă până acum
+            distanceTravelled = abs(self.dr.angle() - initial)
+            detectedColor = sensor.color()  # Obține culoarea detectată de senzor
                 
-                # Oprește robotul dacă s-a parcurs distanța dorită
-                if distanceTravelled >= target:
-                    self.stop()  # Oprește robotul după ce s-a atins distanța țintă
-                    break
+            # Oprește robotul dacă s-a parcurs distanța dorită
+            if distanceTravelled >= target and detectedColor == colour:
+                self.stop()  # Oprește robotul după ce s-a atins distanța țintă
+                break
                 
-                detectedColor = sensor.color()  # Obține culoarea detectată de senzor
+            detectedColor = sensor.color()  # Obține culoarea detectată de senzor
                 
-                if detectedColor == colour:
-                    # Dacă culoarea corectă este detectată, robotul merge înainte
-                    self.drive(power, power)
-                else:
-                    # Dacă culoarea nu este detectată, robotul caută linia
-                    self.drive(0, power)  # Se rotește spre dreapta
+            if detectedColor == colour:
+                # Dacă culoarea corectă este detectată, robotul merge înainte
+                self.drive(power, power)
+            else:
+                # Dacă culoarea nu este detectată, robotul caută linia
+                self.drive(0, power)  # Se rotește spre dreapta
                     
-                    # Verifică din nou culoarea după rotație
-                    detectedColor = sensor.color()
-                    if detectedColor != colour:
-                        self.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei
+                # Verifică din nou culoarea după rotație
+                detectedColor = sensor.color()
+                if detectedColor != colour:
+                    self.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei
+
+    def allignToLine(self, colour: object, power: int) -> None:
+        """ 
+        Aliniază robotul la o linie detectată de senzori.
+        
+        Parametri:
+        - colour: culoarea liniei la care robotul trebuie să se alinieze
+        - power: viteza de deplasare a roților 
+        """
+
+        # Robotul se deplasează înainte până când unul dintre senzori detectează linia
+        while self.colourDr.color() != colour and self.colourSt.color() != colour:
+            self.drive(power, power)
+
+        # Oprește robotul pentru a face ajustări
+        self.stop()
+        
+        # Verifică dacă senzorul drept a detectat linia primul
+        if self.colourDr.color() == colour:
+            # Mișcă doar roata stângă până când și senzorul stâng detectează linia
+            while self.colourSt.color() != colour:
+                self.drive(0, power)
+        
+        # Verifică dacă senzorul stâng a detectat linia primul
+        elif self.colourSt.color() == colour:
+            # Mișcă doar roata dreaptă până când și senzorul drept detectează linia
+            while self.colourDr.color() != colour:
+                self.drive(power, 0)
+        
+        # Oprește robotul după ce ambii senzori detectează linia
+        self.stopDriveTrain()
+
+    def followLinePID(self, sensor: object, color: object, fallBack: int, distance: int, power: int, Kp: float, Ki: float, Kd: float) -> None:
+        initialDistance = self.dr.angle()  # Salvează distanța inițială
+        lastError = 0
+        integral = 0
+
+        while abs(self.dr.angle() - initialDistance) < distance:
+            if sensor.color() == color:
+                referenceValue = sensor.reflection()  # Folosește valoarea reală când detectează culoarea
+            else:
+                referenceValue = fallBack  # Folosește valoarea fallback când senzorul nu detectează culoarea
+
+            error = referenceValue - sensor.reflection()
+            integral += error
+            derivative = error - lastError
+            correction = Kp * error + Ki * integral + Kd * derivative
+            lastError = error
+
+            self.drive(power + correction, power - correction)
+
+        self.stopDriveTrain()
