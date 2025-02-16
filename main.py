@@ -5,7 +5,7 @@
 from pybricks.ev3devices import TouchSensor
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
-from missions import runs, ev3, nemo  # Importăm listele de misiuni și obiectul EV3
+from missions import runs, ev3, nemo 
 from logger import startLogging  # Importăm funcția de logging
 
 # ************ VALUES AND FUNCTIONS ************
@@ -17,7 +17,13 @@ startLogging()
 # Funcție pentru actualizarea ecranului cu valoarea lui counter
 def updateScreen(counter):
     ev3.screen.clear()  # Eliberam ecranul
-    ev3.screen.draw_text(80, 50, str(counter), Color.BLACK, None)  # Afișăm valoarea contorului
+    ev3.screen.draw_text(45, 50, "run " + str(counter), Color.BLACK, None)  # Afișăm valoarea contorului
+    ev3.screen.draw_text(0, 70, str(runs[(counter - 1)].data), Color.BLACK, None)  
+
+def logCounter():
+    counterFile = open("counter.txt", 'w')
+    counterFile.write(str(counter))
+    counterFile.close()
 
 # Afișăm valoarea inițială a lui counter
 updateScreen(counter)
@@ -26,6 +32,7 @@ updateScreen(counter)
 
 # Bucla principală a programului
 while True:
+    logCounter()
     # Verificăm dacă butonul UP este apăsat
     if Button.UP in ev3.buttons.pressed():  
         if counter < len(runs):  # Ne asigurăm că nu depășim limita listei
@@ -43,7 +50,7 @@ while True:
     # Verificăm dacă senzorul touch este apăsat
     elif nemo.touch.pressed():  
         if 0 <= counter - 1 < len(runs):  # Ne asigurăm că indexul este valid
-            runs[counter - 1]()  # Executăm funcția asociată numărului curent
+            runs[(counter - 1)].mission()  # Executăm funcția asociată numărului curent
         wait(100)  # Pauză pentru a evita activarea multiplă
 
-    wait(50)  # Pauză generală pentru eficiență
+    wait(10)  # Pauză generală pentru eficiență
