@@ -88,8 +88,8 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
 # Lista de run-uri pe care robotul le poate face
 
 run01Obj = Mission(run01, "nimic")
-run02Obj = Mission(run02, "recif, rechin, scubi")
+run02Obj = Mission(run02, "recif, rechin")
 run03Obj = Mission(run03, "recif")
-run04Obj = Mission(run04, "barca, angler fisch, verde rotund")
+run04Obj = Mission(run04, "barca")
 
 runs = [run01Obj, run02Obj, run03Obj, run04Obj]

@@ -16,9 +16,22 @@ startLogging()
 
 # Funcție pentru actualizarea ecranului cu valoarea lui counter
 def updateScreen(counter):
-    ev3.screen.clear()  # Eliberam ecranul
-    ev3.screen.draw_text(45, 50, "run " + str(counter), Color.BLACK, None)  # Afișăm valoarea contorului
-    ev3.screen.draw_text(0, 70, str(runs[(counter - 1)].data), Color.BLACK, None)  
+    ev3.screen.clear()  # Clear the screen
+
+    ev3.screen.draw_text(
+        (ev3.screen.width - len("run " + str(counter)) * 6) // 2,  
+        ev3.screen.height // 2 - 20, 
+        "run " + str(counter),
+        Color.BLACK, None
+    ) 
+
+    ev3.screen.draw_text(
+        (ev3.screen.width - len(str(runs[(counter - 1)].data)) * 6) // 2,  
+         ev3.screen.height // 2, 
+        str(runs[(counter - 1)].data),
+        Color.BLACK, None
+    )
+
 
 def logCounter():
     counterFile = open("counter.txt", 'w')
@@ -53,4 +66,4 @@ while True:
             runs[(counter - 1)].mission()  # Executăm funcția asociată numărului curent
         wait(100)  # Pauză pentru a evita activarea multiplă
 
-    wait(10)  # Pauză generală pentru eficiență
+    wait(100)  # Pauză generală pentru eficiență
