@@ -85,6 +85,43 @@ class Robot:
         for motor in self.motorList:
             motor.hold()
 
+    def stopDriveTrain(self) -> None:
+        """
+        Opreste toate motoarele de la sasiu
+        """
+        self.dr.stop()
+        self.st.stop()
+
+    def stopDriveTrain(self) -> None:
+        """
+        Menține motoarele sasiului în poziție.
+        """
+        self.dr.hold()
+        self.st.hold()
+
+    def driveToTarget(self, target: int, power: int) -> None:
+        """
+        Mergi pana la un anumit target
+        """
+
+        # Pornim ambele motoare simultan spre ținta dorită
+        self.dr.run_angle(power, target)
+        self.st.run_angle(power, target)
+
+    def drive(self, powerDr: int, powerSt: int) -> None:
+        self.dr.run(powerDr)
+        self.st.run(powerSt)
+    
+    def runDrUntilStalled(self, powerDr):
+        self.dr.run_until_stalled(powerDr)
+
+    def runStUntilStalled(self, powerSt):
+        self.st.run_until_stalled(powerSt)
+
+    def driveUntilStalled(self, powerDr: int, powerSt: int) -> None:
+        _thread.start_new_thread(self.runDrUntilStalled, (powerDr,)) 
+        _thread.start_new_thread(self.runStUntilStalled, (powerSt,)) 
+
     # ************ THREAD CONTROL ************
     def startThreads(self) -> None:
         """
@@ -128,7 +165,7 @@ class Robot:
             motor.run_angle(speed, angle)
 
     # ************ METHODS WITH GYRO ************
-    def gotoGyro(self, Kp: float, Ki: float, Kd: float, targetAngle: int, tolerance: int = 1) -> None:
+    def gotoGyroPID(self, Kp: float, Ki: float, Kd: float, targetAngle: int, tolerance: int = 1) -> None:
         """
         Utilizează senzorul giroscopic pentru a roti robotul la un unghi țintă folosind un regulator PID.
         
@@ -164,3 +201,57 @@ class Robot:
             # Verifică dacă eroarea este suficient de mică pentru a considera că robotul a ajuns aproape de țintă
             if abs(error) <= tolerance:
                 break  
+    
+    def gotoGyro(self, targetAngle: int, speed1: int, speed2: int, tolerance: int = 1) -> None:
+
+        """
+        Această funcție ajustează direcția robotului pentru a ajunge la unghiul țintă specificat,
+        ținând cont de toleranța dată.
+        
+        Parametri:
+        - targetAngle: unghiul țintă la care robotul trebuie să ajungă (în grade).
+        - speed1: viteza motorului stâng.
+        - speed2: viteza motorului drept.
+        - tolerance: toleranța (în grade) față de unghiul țintă la care considerăm că am ajuns (implicit 1 grad).
+        """
+
+        # Continuăm să ajustăm unghiul robotului până când ajungem la unghiul țintă
+        while True:
+            currentAngle = self.gyro.angle()  # Obținem unghiul curent al robotului de la giroscop
+
+            # Verificăm dacă unghiul țintă a fost atins (cu o toleranță de 1 grad)
+            if abs(currentAngle - targetAngle) < tolerance:
+                break  # Ieșim din buclă când suntem suficient de aproape de unghiul țintă
+
+            if currentAngle < 0:
+                # Dacă unghiul curent este negativ, facem robotul să vireze într-o direcție
+                self.drive(-speed1, speed2)
+            else:
+                # Dacă unghiul curent este pozitiv, facem robotul să vireze în direcția opusă
+                self.drive(speed1, -speed2)
+
+    def straightWithGyro(self, distance: int, power: int) -> None:
+        """
+        Mărește distanța parcursă pe o linie dreaptă, corectând direcția cu ajutorul giroscopului.
+        
+        Parametri:
+        - distance: distanța pe care robotul trebuie să o parcurgă (în unități corespunzătoare).
+        - power: puterea (viteza) motoarelor pentru deplasare.
+        """
+        
+        previousAngle = self.gyro.angle() 
+        previousDistanceTravelled = self.dr.angle() 
+        
+        while True:
+            distanceTravelled = self.dr.angle() - previousDistanceTravelled
+            
+            if abs(distanceTravelled) >= distance:
+                break
+
+            correction = self.gyro.angle() - previousAngle
+            self.drive(power - correction, power + correction)
+            
+            previousAngle = self.gyro.angle()
+            previousDistanceTravelled = self.dr.angle()  
+
+        self.stop()

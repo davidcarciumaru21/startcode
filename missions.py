@@ -85,7 +85,7 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     nemo04.d.straight(800)
     nemo04.d.turn(45)
 
-# Lista de run-uri pe care robotul le poate face
+# ************ FOR EXPORT ************
 
 run01Obj = Mission(run01, "nimic")
 run02Obj = Mission(run02, "recif, rechin")
