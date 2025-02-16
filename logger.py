@@ -4,7 +4,7 @@
 
 import time
 from pybricks.tools import DataLog
-from missions import nemo
+from missions import nemo, ev3
 import _thread
 from pybricks.hubs import EV3Brick
 from pybricks.tools import wait, StopWatch, DataLog
@@ -12,10 +12,17 @@ from pybricks.tools import wait, StopWatch, DataLog
 # ************ VALUES AND OBJECTS ************
 
 # Inițializăm un obiect DataLog pentru înregistrarea datelor relevante
-loger = DataLog('drAngle', 'stAngle', 'bratdrAngle', 'bratstAngle', 'voltage', 'gyro', 'button', name='log', timestamp=False, extension='csv', append=False)
-
-# Inițializăm robotul cu dimensiunile corespunzătoare
-nemo = Robot(49.5, 113)
+loger = DataLog('drAngle',
+                'stAngle',
+                'bratdrAngle',
+                'bratstAngle',
+                'voltage',
+                'gyro',
+                'button',
+                name='log',
+                timestamp=False,
+                extension='csv',
+                append=False)
 
 # ************ MAIN ************
 

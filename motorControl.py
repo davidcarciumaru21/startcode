@@ -32,16 +32,18 @@ def displayStatus(mode):
     ev3.screen.clear()  # Eliberează ecranul pentru noul afișaj
     
     if mode == 0:
-        ev3.screen.draw_text(10, 20, "Mode: Drive", Color.BLACK)
-        ev3.screen.draw_image(50, 50, ImageFile.ARROW_UP)  # Iconiță pentru mișcare
-        ev3.screen.draw_text(10, 80, "Use arrows for movement", Color.BLACK)
+        ev3.screen.draw_text(0, 0, "Mode: Drive", Color.BLACK)
+        ev3.screen.draw_text(0, 30, "Use arrows to", Color.BLACK)
+        ev3.screen.draw_text(0, 50, "to control drive", Color.BLACK)
     elif mode == 1:
-        ev3.screen.draw_text(10, 20, "Mode: Arm", Color.BLACK)
-        ev3.screen.draw_image(50, 50, ImageFile.TOOLBOX)  # Iconiță pentru braț
-        ev3.screen.draw_text(10, 80, "Use arrows to move arm", Color.BLACK)
+        ev3.screen.draw_text(0, 0, "Mode: Arm", Color.BLACK)
+        ev3.screen.draw_text(0, 30, "Use arrows", Color.BLACK)
+        ev3.screen.draw_text(0, 50, "to control arms", Color.BLACK)
 
-    ev3.screen.draw_text(10, 100, "Press Center to Switch", Color.BLACK)
-    wait(50) 
+    ev3.screen.draw_text(0, 80, "Press Center to", Color.BLACK)
+    ev3.screen.draw_text(0, 100, "switch", Color.BLACK)
+    wait(50)
+
 
 #*********** MOTOR CONTROL ***********
 

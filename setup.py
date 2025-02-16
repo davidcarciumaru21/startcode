@@ -129,38 +129,38 @@ class Robot:
 
     # ************ METHODS WITH GYRO ************
     def gotoGyro(self, Kp: float, Ki: float, Kd: float, targetAngle: int, tolerance: int = 1) -> None:
-    """
-    Utilizează senzorul giroscopic pentru a roti robotul la un unghi țintă folosind un regulator PID.
-    
-    Argumente:
-    Kp : float - coeficientul proporțional (folosit pentru a ajusta viteza în funcție de eroare)
-    Ki : float - coeficientul integrator (compensează erorile acumulate pe termen lung)
-    Kd : float - coeficientul derivativ (ajută la reducerea oscilațiilor și îmbunătățirea răspunsului)
-    targetAngle : int - unghiul țintă la care trebuie să ajungă robotul
-    tolerance : int - toleranța acceptabilă pentru a considera că robotul a ajuns la unghiul dorit (implicit 1)
-    """
+        """
+        Utilizează senzorul giroscopic pentru a roti robotul la un unghi țintă folosind un regulator PID.
+        
+        Argumente:
+        Kp : float - coeficientul proporțional (folosit pentru a ajusta viteza în funcție de eroare)
+        Ki : float - coeficientul integrator (compensează erorile acumulate pe termen lung)
+        Kd : float - coeficientul derivativ (ajută la reducerea oscilațiilor și îmbunătățirea răspunsului)
+        targetAngle : int - unghiul țintă la care trebuie să ajungă robotul
+        tolerance : int - toleranța acceptabilă pentru a considera că robotul a ajuns la unghiul dorit (implicit 1)
+        """
 
-    # Inițializează eroarea anterioară (pentru calculul derivativ)
-    previousError = 0
-    # Inițializează valoarea integralului (pentru compensarea erorilor acumulate)
-    integral = 0
+        # Inițializează eroarea anterioară (pentru calculul derivativ)
+        previousError = 0
+        # Inițializează valoarea integralului (pentru compensarea erorilor acumulate)
+        integral = 0
 
-    while True: 
-        currentAngle = self.gyro.angle()
+        while True: 
+            currentAngle = self.gyro.angle()
 
-        # Calculul erorii (diferența între unghiul țintă și cel curent)
-        error = targetAngle - currentAngle
-        # Actualizează valoarea integralului (integrarea erorii în timp)
-        integral += error * 0.01
-        # Calculul derivativului (schimbarea erorii în timp)
-        derivative = (error - previousError) / 0.01
-        # Calculul ieșirii PID (proporțional + integrativ + derivativ)
-        output = Kp * error + Ki * integral + Kd * derivative
+            # Calculul erorii (diferența între unghiul țintă și cel curent)
+            error = targetAngle - currentAngle
+            # Actualizează valoarea integralului (integrarea erorii în timp)
+            integral += error * 0.01
+            # Calculul derivativului (schimbarea erorii în timp)
+            derivative = (error - previousError) / 0.01
+            # Calculul ieșirii PID (proporțional + integrativ + derivativ)
+            output = Kp * error + Ki * integral + Kd * derivative
 
-        self.drive(-output, output)
+            self.drive(-output, output)
 
-        previousError = error
+            previousError = error
 
-        # Verifică dacă eroarea este suficient de mică pentru a considera că robotul a ajuns aproape de țintă
-        if abs(error) <= tolerance:
-            break  
+            # Verifică dacă eroarea este suficient de mică pentru a considera că robotul a ajuns aproape de țintă
+            if abs(error) <= tolerance:
+                break  

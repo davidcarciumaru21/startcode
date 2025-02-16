@@ -14,9 +14,6 @@ from setup import Robot
 
 # ************ GLOBAL VALUES ************
 
-# Lista de run-uri pe care robotul le poate face
-runs = [run01, run02, run03, run04]
-
 nemo = Robot(49.5, 113)
 nemo.d.settings(2000, 2000, 2000, 2000)
 
@@ -41,7 +38,6 @@ nemo04.d.settings(2000, 2000, 2000, 2000)
 
 def run01(): #colectare stanga
     wait(200)
-
 
 def run02(): #recif, rechin, scubi
     wait(200)
@@ -87,3 +83,6 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     nemo04.d.turn(90)
     nemo04.d.straight(800)
     nemo04.d.turn(45)
+
+# Lista de run-uri pe care robotul le poate face
+runs = [run01, run02, run03, run04]

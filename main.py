@@ -5,7 +5,7 @@
 from pybricks.ev3devices import TouchSensor
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
-from missions import runs, ev3  # Importăm listele de misiuni și obiectul EV3
+from missions import runs, ev3, nemo  # Importăm listele de misiuni și obiectul EV3
 from logger import startLogging  # Importăm funcția de logging
 
 # ************ VALUES AND FUNCTIONS ************
