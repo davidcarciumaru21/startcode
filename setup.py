@@ -12,6 +12,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 import _thread
 from errors import *
+import math
 
 # ************ ROBOT ************
 
@@ -72,7 +73,7 @@ class Robot:
         except Exception:
             raise UnableToFindSensor(name)
 
-    # ************ DRIVETRAIN CONTROL ************
+    # ************ DRIVETRAIN AND MOTOR CONTROL ************
     def stopRobot(self) -> None:
         """
         Oprește toate motoarele.
@@ -96,14 +97,15 @@ class Robot:
 
     def driveToTarget(self, target: int, power: int) -> None:
         """
-        Mergi pana la un anumit target
+        Mergi până la un anumit target, rulând motoarele simultan.
         """
-
-        # Pornim ambele motoare simultan spre ținta dorită
-        self.dr.run_angle(power, target)
-        self.st.run_angle(power, target)
+        self.dr.run_angle(power, target, wait=False)  # Nu așteaptă finalizarea mișcării
+        self.st.run_angle(power, target, wait=True)   # Așteaptă finalizarea mișcării
 
     def drive(self, powerDr: int, powerSt: int) -> None:
+        """
+        Rulează motoarele continuu la viteze diferite.
+        """
         self.dr.run(powerDr)
         self.st.run(powerSt)
     
@@ -116,6 +118,35 @@ class Robot:
     def driveUntilStalled(self, powerDr: int, powerSt: int) -> None:
         _thread.start_new_thread(self.runDrUntilStalled, (powerDr,)) 
         _thread.start_new_thread(self.runStUntilStalled, (powerSt,)) 
+
+    def moveByCm(self, distance: int, speed: int, motor: object) -> None:
+        """
+        Deplasează un motor pe o distanță specificată, calculând numărul necesar de grade pentru motor.
+
+        distance: Distanța dorită în centimetri.
+        speed: Viteza motoarelor.
+        """
+
+        # Calculăm câte grade trebuie să rotească motoarele
+        degrees: float = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+
+        # Pornim motorul pentru a se roti numărul calculat de grade
+        self.motor.run_angle(speed, degrees, Stop.BRAKE)
+
+    def driveByCm(self, distance: int, speed: int) -> None:
+        """
+        Deplasează robotul pe o distanță specificată, calculând numărul necesar de grade pentru motoare.
+
+        distance: Distanța dorită în centimetri.
+        speed: Viteza motoarelor.
+        """
+
+        # Calculăm câte grade trebuie să rotească motoarele
+        degrees: float = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+
+        # Pornim motoarele pentru a se roti numărul calculat de grade
+        self.st.run_angle(speed, degrees, Stop.BRAKE, wait=False)
+        self.dr.run_angle(speed, degrees, Stop.BRAKE, wait=True)
 
     # ************ THREAD CONTROL ************
     def startThreads(self) -> None:
@@ -197,7 +228,7 @@ class Robot:
             if abs(error) <= tolerance:
                 break  
     
-    def gotoGyro(self, targetAngle: int, speed1: int, speed2: int, tolerance: int = 1) -> None:
+    def gotoGyro(self, targetAngle: int, power: int, tolerance: int = 1) -> None:
 
         """
         Această funcție ajustează direcția robotului pentru a ajunge la unghiul țintă specificat,
@@ -220,10 +251,10 @@ class Robot:
 
             if currentAngle < 0:
                 # Dacă unghiul curent este negativ, facem robotul să vireze într-o direcție
-                self.drive(-speed1, speed2)
+                self.drive(-power, power)
             else:
                 # Dacă unghiul curent este pozitiv, facem robotul să vireze în direcția opusă
-                self.drive(speed1, -speed2)
+                self.drive(power, -power)
 
     def straightWithGyro(self, distance: int, power: int) -> None:
         """
@@ -341,4 +372,35 @@ class Robot:
 
             self.drive(power + correction, power - correction)
 
+        self.stopDriveTrain()
+
+    # ************ MIXED METHODS ************
+    def alignToLineMixed(self, angle: int, colour: object, power: int) -> None:
+        """
+        Funcție pentru alinierea robotului la o linie folosind doi senzori de culoare.
+        
+        - angle: unghiul inițial față de care se va face corectarea
+        - colour: culoarea liniei la care ne aliniem
+        - power: viteza motoarelor în timpul alinierei
+        """
+
+        angleIncrementer: int = 1 
+
+        while self.sensorDr.color() != colour and self.sensorSt.color() != colour:
+            self.drive(power, power)  # Ambele motoare merg înainte
+
+        self.stopDriveTrain()  # Oprire pentru a evita depășirea liniei
+
+        if self.sensorDr.color() == colour and self.sensorSt.color() != colour:
+            # Dacă doar senzorul din dreapta a detectat linia, rotim ușor robotul spre stânga
+            while self.sensorSt.color() != colour:
+                self.gotoGyro(angle + angleIncrementer, 300, 0)
+                angleIncrementer += 1  # Creștem ușor unghiul pentru o aliniere fină
+
+        elif self.sensorSt.color() == colour and self.sensorDr.color() != colour:
+            while self.sensorDr.color() != colour:
+                self.gotoGyro(angle - angleIncrementer, 300, 0)
+                angleIncrementer += 1  # Creștem ușor unghiul pentru o aliniere fină
+
+        # Oprire finală după aliniere
         self.stopDriveTrain()
