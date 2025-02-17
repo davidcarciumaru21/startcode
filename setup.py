@@ -31,8 +31,8 @@ class Robot:
         # Inițializarea motoarelor
         self.st = self.initMotor(Port.A, "Left motor", Direction.CLOCKWISE)
         self.dr = self.initMotor(Port.D, "Right motor", Direction.CLOCKWISE)
-        self.bratSt = self.initMotor(Port.C, "Left arm motor")
         self.bratDr = self.initMotor(Port.B, "Right arm motor")
+        self.bratSt = self.initMotor(Port.C, "Left arm motor")
 
         # Inițializarea senzorilor
         self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
@@ -79,7 +79,7 @@ class Robot:
         Oprește toate motoarele.
         """
         for motor in self.motorList:
-            motor.stop()
+            motor.brake()
 
     def holdRobot(self) -> None:
         """
@@ -119,7 +119,7 @@ class Robot:
         _thread.start_new_thread(self.runDrUntilStalled, (powerDr,)) 
         _thread.start_new_thread(self.runStUntilStalled, (powerSt,)) 
 
-    def moveByCm(self, distance: int, speed: int, motor: object, diameter = float: self.WHEELDIAMETER) -> None:
+    def moveByCm(self, distance: int, speed: int, motor: object, diameter: float) -> None:
         """
         Deplasează un motor pe o distanță specificată, calculând numărul necesar de grade pentru motor.
 
@@ -128,7 +128,7 @@ class Robot:
         """
 
         # Calculăm câte grade trebuie să rotească motoarele
-        degrees: float = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+        degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
 
         # Pornim motorul pentru a se roti numărul calculat de grade
         self.motor.run_angle(speed, degrees, Stop.BRAKE)
@@ -165,11 +165,11 @@ class Robot:
         self.bratSt.run_until_stalled(power)
 
     def resetAllAngles(self) -> None:
-    """
-    Resetează unghiurile tuturor motoarelor din lista `motorList` la 0 grade.
-    """
-    for motor in self.motorList:
-        motor.reset_angle(0)
+        """
+        Resetează unghiurile tuturor motoarelor din lista `motorList` la 0 grade.
+        """
+        for motor in self.motorList:
+            motor.reset_angle(0)
 
     def resetDriveTrainAngles(self) -> None:
         """
@@ -317,7 +317,7 @@ class Robot:
             previousAngle = self.gyro.angle()
             previousDistanceTravelled = self.dr.angle()  
 
-        self.stopRobot()
+        self.stopDriveTrain()
 
         # ************ METHODS WITH COLOUR SENSORS ************
 
@@ -342,7 +342,7 @@ class Robot:
                 
             # Oprește robotul dacă s-a parcurs distanța dorită
             if distanceTravelled >= target and detectedColor == colour:
-                self.stop()  # Oprește robotul după ce s-a atins distanța țintă
+                self.stopDriveTrain()()  # Oprește robotul după ce s-a atins distanța țintă
                 break
                 
             detectedColor = sensor.color()  # Obține culoarea detectată de senzor
@@ -373,7 +373,7 @@ class Robot:
             self.drive(power, power)
 
         # Oprește robotul pentru a face ajustări
-        self.stop()
+        self.stopDriveTrain()()
         
         # Verifică dacă senzorul drept a detectat linia primul
         if self.colourDr.color() == colour:
