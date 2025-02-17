@@ -15,7 +15,7 @@ from setup import Robot
 
 # ************ GLOBAL VALUES ************
 
-nemo = Robot(49.5, 113)
+nemo: object = Robot(49.5, 113)
 nemo.d.settings(2000, 2000, 2000, 2000)
 
 ev3 = EV3Brick()
@@ -23,16 +23,16 @@ ev3 = EV3Brick()
 # ************ ROBOT OBJECTS ************
 
 # Inițializăm instanțe ale robotului pentru fiecare run
-nemo01 = Robot(49.5, 115)
+nemo01: object = Robot(49.5, 115)
 nemo01.d.settings(2000, 2000, 2000, 2000)
 
-nemo02 = Robot(49.5, 115)
+nemo02: object = Robot(49.5, 115)
 nemo02.d.settings(2000, 2000, 500, 500)
 
-nemo03 = Robot(49.5, 115)
+nemo03: object = Robot(49.5, 115)
 nemo03.d.settings(2000, 2000, 2000, 2000)
 
-nemo04 = Robot(49.5, 115)
+nemo04: object = Robot(49.5, 115)
 nemo04.d.settings(2000, 2000, 2000, 2000)
 
 # ************ RUNS ************
@@ -118,9 +118,9 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
 
 # Lista de run-uri pe care robotul le poate face
 
-run01Obj = Mission(run01, "nimic")
-run02Obj = Mission(run02, "recif, rechin")
-run03Obj = Mission(run03, "recif")
-run04Obj = Mission(run04, "barca")
+run01Obj: object = Mission(run01, "nimic")
+run02Obj: object = Mission(run02, "recif, rechin")
+run03Obj: object = Mission(run03, "recif")
+run04Obj: object = Mission(run04, "barca")
 
-runs = [run01Obj, run02Obj, run03Obj, run04Obj]
+runs: list = [run01Obj, run02Obj, run03Obj, run04Obj]

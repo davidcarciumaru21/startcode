@@ -12,7 +12,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 # ************ VALUES AND OBJECTS ************
 
 # Inițializăm un obiect DataLog pentru înregistrarea datelor relevante
-loger = DataLog('drAngle',
+loger: object = DataLog('drAngle',
                 'stAngle',
                 'bratdrAngle',
                 'bratstAngle',
@@ -31,7 +31,7 @@ loger = DataLog('drAngle',
 
 def logDataThread():
     while True:
-        counterFile = open("counter.txt", "r")
+        counterFile: object = open("counter.txt", "r")
         try:
             # Înregistrăm datele senzorilor și ale componentelor robotului
             loger.log(

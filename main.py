@@ -11,7 +11,7 @@ from logger import startLogging  # Importăm funcția de logging
 # ************ VALUES AND FUNCTIONS ************
 
 # Inițializăm counter-ul și pornim înregistrare datelor
-counter = 1  
+counter: int = 1  
 startLogging()
 
 # Funcție pentru actualizarea ecranului cu valoarea lui counter

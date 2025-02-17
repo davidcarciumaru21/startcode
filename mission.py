@@ -10,8 +10,8 @@ class Mission:
     
     def __init__(self, mission: callable, data: str) -> None:
      
-        self.mission = mission  # Atribuirea funcției sau metodei care reprezintă misiunea
-        self.data = data  # Atribuirea datelor asociate misiunii
+        self.mission: callable = mission  # Atribuirea funcției sau metodei care reprezintă misiunea
+        self.data: str = data  # Atribuirea datelor asociate misiunii
 
     def __str__(self) -> str:
     
