@@ -14,14 +14,14 @@ from setup import Robot
 
 # ************ VALUES AND OBJECTS ************
 
-ev3: object = EV3Brick()
+ev3 = EV3Brick()
 
 # Crearea obiectului robotului și setarea parametrilor săi
-nemo: object = Robot(49.5, 113)
+nemo = Robot(49.5, 113)
 nemo.d.settings(1000, 1000, 1000, 1000)  # Setarea vitezei și accelerației
 
 # Variabilă pentru modul de funcționare (0 = DriveTrain, 1 = ArmMotors)
-mode: int = 0
+mode = 0
 
 #*********** STATUS ***********
 

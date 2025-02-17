@@ -25,34 +25,34 @@ class Robot:
         """
         Inițializează robotul cu dimensiunile roților și ecartamentul.
         """
-        self.WHEELDIAMETER: float = WHEELDIAMETER  # ! Constanta. Nu o modifica!
-        self.AXLETRACK: float = AXLETRACK  # ! Constanta. Nu o modifica!
+        self.WHEELDIAMETER = WHEELDIAMETER  # ! Constanta. Nu o modifica!
+        self.AXLETRACK = AXLETRACK  # ! Constanta. Nu o modifica!
 
         # Inițializarea motoarelor
-        self.st: object = self.initMotor(Port.A, "Left motor", Direction.CLOCKWISE)
-        self.dr: object = self.initMotor(Port.D, "Right motor", Direction.CLOCKWISE)
-        self.bratSt: object = self.initMotor(Port.C, "Left arm motor")
-        self.bratDr: object = self.initMotor(Port.B, "Right arm motor")
+        self.st = self.initMotor(Port.A, "Left motor", Direction.CLOCKWISE)
+        self.dr = self.initMotor(Port.D, "Right motor", Direction.CLOCKWISE)
+        self.bratSt = self.initMotor(Port.C, "Left arm motor")
+        self.bratDr = self.initMotor(Port.B, "Right arm motor")
 
         # Inițializarea senzorilor
-        self.touch: object = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
-        self.gyro: object = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
-        self.colourDr: object = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
-        self.colourSt: object = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")
+        self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
+        self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
+        self.colourDr = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
+        self.colourSt = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")
 
         # Inițializarea bazei de mișcare
-        self.d: object = DriveBase(
+        self.d = DriveBase(
             self.st, self.dr, self.WHEELDIAMETER, self.AXLETRACK)
 
         # Blocări pentru thread-uri
-        self.lock0: object = _thread.allocate_lock()
-        self.lock1: object = _thread.allocate_lock()
-        self.lock2: object = _thread.allocate_lock()
-        self.lock3: object = _thread.allocate_lock()
-        self.threadStopFlag: bool = False
+        self.lock0 = _thread.allocate_lock()
+        self.lock1 = _thread.allocate_lock()
+        self.lock2 = _thread.allocate_lock()
+        self.lock3 = _thread.allocate_lock()
+        self.threadStopFlag = False
 
         # Lista motoarelor
-        self.motorList: list = [self.st, self.dr, self.bratSt, self.bratDr]
+        self.motorList = [self.st, self.dr, self.bratSt, self.bratDr]
 
     # ************ INITIALIZATION ************
     def initMotor(self, port: Port, name: str, direction=Direction.CLOCKWISE) -> Motor:
@@ -119,7 +119,7 @@ class Robot:
         _thread.start_new_thread(self.runDrUntilStalled, (powerDr,)) 
         _thread.start_new_thread(self.runStUntilStalled, (powerSt,)) 
 
-    def moveByCm(self, distance: int, speed: int, motor: object, diameter = self.WHEELDIAMETER: float) -> None:
+    def moveByCm(self, distance: int, speed: int, motor: object, diameter = float: self.WHEELDIAMETER) -> None:
         """
         Deplasează un motor pe o distanță specificată, calculând numărul necesar de grade pentru motor.
 
@@ -142,11 +142,48 @@ class Robot:
         """
 
         # Calculăm câte grade trebuie să rotească motoarele
-        degrees: float = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+        degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
 
         # Pornim motoarele pentru a se roti numărul calculat de grade
         self.st.run_angle(speed, degrees, Stop.BRAKE, wait=False)
         self.dr.run_angle(speed, degrees, Stop.BRAKE, wait=True)
+
+    def runUntilStalledArms(self, power: int = 1000) -> None:
+        """
+        Resetează motoarele brațelor robotului, făcându-le să se oprească 
+        atunci când întâmpină o rezistență (adică ajung la poziția de pornire).
+
+        Parametri:
+        - power (int, implicit 1000): Puterea cu care motoarele brațelor se vor roti
+        până când se vor bloca.
+        """
+            
+        # Rulează motorul drept al brațului până când se oprește din cauza rezistenței
+        self.bratDr.run_until_stalled(power)
+
+        # Rulează motorul stâng al brațului până când se oprește din cauza rezistenței
+        self.bratSt.run_until_stalled(power)
+
+    def resetAllAngles(self) -> None:
+    """
+    Resetează unghiurile tuturor motoarelor din lista `motorList` la 0 grade.
+    """
+    for motor in self.motorList:
+        motor.reset_angle(0)
+
+    def resetDriveTrainAngles(self) -> None:
+        """
+        Resetează unghiurile motoarelor de tracțiune (stânga și dreapta) la 0 grade.
+        """
+        self.dr.reset_angle(0)
+        self.st.reset_angle(0)
+
+    def resetArmsAngles(self) -> None:
+        """
+        Resetează unghiurile motoarelor brațelor (drept și stâng) la 0 grade.
+        """
+        self.bratDr.reset_angle(0)
+        self.bratSt.reset_angle(0)
 
     # ************ THREAD CONTROL ************
     def startThreads(self) -> None:
@@ -204,25 +241,25 @@ class Robot:
         """
 
         # Inițializează eroarea anterioară (pentru calculul derivativ)
-        previousError: float = 0
+        previousError = 0
         # Inițializează valoarea integralului (pentru compensarea erorilor acumulate)
-        integral: float = 0
+        integral = 0
 
         while True: 
-            currentAngle: float = self.gyro.angle()
+            currentAngle = self.gyro.angle()
 
             # Calculul erorii (diferența între unghiul țintă și cel curent)
-            error: float = targetAngle - currentAngle
+            error = targetAngle - currentAngle
             # Actualizează valoarea integralului (integrarea erorii în timp)
             integral += error * 0.01
             # Calculul derivativului (schimbarea erorii în timp)
-            derivative: float = (error - previousError) / 0.01
+            derivative = (error - previousError) / 0.01
             # Calculul ieșirii PID (proporțional + integrativ + derivativ)
-            output: float = Kp * error + Ki * integral + Kd * derivative
+            output = Kp * error + Ki * integral + Kd * derivative
 
             self.drive(-output, output)
 
-            previousError: float = error
+            previousError = error
 
             # Verifică dacă eroarea este suficient de mică pentru a considera că robotul a ajuns aproape de țintă
             if abs(error) <= tolerance:
@@ -243,7 +280,7 @@ class Robot:
 
         # Continuăm să ajustăm unghiul robotului până când ajungem la unghiul țintă
         while True:
-            currentAngle: float = self.gyro.angle()  # Obținem unghiul curent al robotului de la giroscop
+            currentAngle = self.gyro.angle()  # Obținem unghiul curent al robotului de la giroscop
 
             # Verificăm dacă unghiul țintă a fost atins (cu o toleranță de 1 grad)
             if abs(currentAngle - targetAngle) < tolerance:
@@ -265,20 +302,20 @@ class Robot:
         - power: puterea (viteza) motoarelor pentru deplasare.
         """
         
-        previousAngle: float = self.gyro.angle() 
-        previousDistanceTravelled: float = self.dr.angle() 
+        previousAngle = self.gyro.angle() 
+        previousDistanceTravelled = self.dr.angle() 
         
         while True:
-            distanceTravelled: float = self.dr.angle() - previousDistanceTravelled
+            distanceTravelled = self.dr.angle() - previousDistanceTravelled
             
             if abs(distanceTravelled) >= distance:
                 break
 
-            correction: float = self.gyro.angle() - previousAngle
+            correction = self.gyro.angle() - previousAngle
             self.drive(power - correction, power + correction)
             
-            previousAngle: float = self.gyro.angle()
-            previousDistanceTravelled: float = self.dr.angle()  
+            previousAngle = self.gyro.angle()
+            previousDistanceTravelled = self.dr.angle()  
 
         self.stopRobot()
 
@@ -296,19 +333,19 @@ class Robot:
         - target: pozitia la care vrem sa ajunga robotul
         """
 
-        initial: float = self.dr.angle()  # Salvează unghiul inițial al motorului (poziția de început)
+        initial = self.dr.angle()  # Salvează unghiul inițial al motorului (poziția de început)
         
         while True:
             # Calculează distanța parcursă până acum
-            distanceTravelled: float = abs(self.dr.angle() - initial)
-            detectedColor: object = sensor.color()  # Obține culoarea detectată de senzor
+            distanceTravelled = abs(self.dr.angle() - initial)
+            detectedColor = sensor.color()  # Obține culoarea detectată de senzor
                 
             # Oprește robotul dacă s-a parcurs distanța dorită
             if distanceTravelled >= target and detectedColor == colour:
                 self.stop()  # Oprește robotul după ce s-a atins distanța țintă
                 break
                 
-            detectedColor: object = sensor.color()  # Obține culoarea detectată de senzor
+            detectedColor = sensor.color()  # Obține culoarea detectată de senzor
                 
             if detectedColor == colour:
                 # Dacă culoarea corectă este detectată, robotul merge înainte
@@ -318,7 +355,7 @@ class Robot:
                 self.drive(0, power)  # Se rotește spre dreapta
                     
                 # Verifică din nou culoarea după rotație
-                detectedColor: object = sensor.color()
+                detectedColor = sensor.color()
                 if detectedColor != colour:
                     self.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei
 
@@ -354,21 +391,21 @@ class Robot:
         self.stopDriveTrain()
 
     def followLinePID(self, sensor: object, color: object, fallBack: int, distance: int, power: int, Kp: float, Ki: float, Kd: float) -> None:
-        initialDistance: float = self.dr.angle()  # Salvează distanța inițială
-        lastError: float = 0
-        integral: float = 0
+        initialDistance = self.dr.angle()  # Salvează distanța inițială
+        lastError = 0
+        integral = 0
 
         while abs(self.dr.angle() - initialDistance) < distance:
             if sensor.color() == color:
-                referenceValue: float = sensor.reflection()  # Folosește valoarea reală când detectează culoarea
+                referenceValue = sensor.reflection()  # Folosește valoarea reală când detectează culoarea
             else:
-                referenceValue: float = fallBack  # Folosește valoarea fallback când senzorul nu detectează culoarea
+                referenceValue = fallBack  # Folosește valoarea fallback când senzorul nu detectează culoarea
 
-            error: float = referenceValue - sensor.reflection()
+            error = referenceValue - sensor.reflection()
             integral += error
-            derivative: float = error - lastError
-            correction: float = Kp * error + Ki * integral + Kd * derivative
-            lastError: float = error
+            derivative = error - lastError
+            correction = Kp * error + Ki * integral + Kd * derivative
+            lastError = error
 
             self.drive(power + correction, power - correction)
 
@@ -384,7 +421,7 @@ class Robot:
         - power: viteza motoarelor în timpul alinierei
         """
 
-        angleIncrementer: int = 0 
+        angleIncrementer = 1 
 
         while self.sensorDr.color() != colour and self.sensorSt.color() != colour:
             self.drive(power, power)  # Ambele motoare merg înainte
