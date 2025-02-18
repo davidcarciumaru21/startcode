@@ -438,6 +438,3 @@ class Robot:
             while self.sensorDr.color() != colour:
                 self.gotoGyro(angle - angleIncrementer, 300, 0)
                 angleIncrementer += 1  # Creștem ușor unghiul pentru o aliniere fină
-
-        # Oprire finală după aliniere
-        self.stopDriveTrain()

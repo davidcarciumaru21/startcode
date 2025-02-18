@@ -42,7 +42,7 @@ def updateScreen():
         ev3.screen.clear()  # Clear the screen
 
         ev3.screen.draw_text(
-            (ev3.screen.width - len("run " + str(runCounter)) * 6) // 2,  
+            (ev3.screen.width - len("run " + str(toolCounter)) * 6) // 2 - len("run " + str(toolCounter)) * 6 // 2,  
             ev3.screen.height // 2 - 20, 
             (toolList[(toolCounter - 1)].name),
             Color.BLACK, None
@@ -85,7 +85,7 @@ while True:
         updateScreen()  # Actualizăm ecranul
         wait(100)  # Pauză pentru a evita multiple apăsări accidentale
 
-    elif Button.RIGHT in ev3.buttons.pressed():  
+    elif Button.LEFT in ev3.buttons.pressed():  
         if toolCounter > 0:  # Ne asigurăm că nu depășim limita listei
             toolCounter -= 1  # Incrementăm runCounter-ul
         updateScreen()  # Actualizăm ecranul

@@ -1,30 +1,33 @@
 from missions import ev3, nemo
 from tool import Tool
 
+warned = False  # Variabilă globală care indică dacă s-a emis deja un semnal sonor
+
 def resetGyro(threshold: int = 3) -> None:
     """
-    Resetează unghiul gyro la 0 dacă valoarea acestuia depășește pragul.
-    Emită un semnal sonor atunci când unghiul gyro depășește pragul, 
-    pentru a avertiza utilizatorul că senzorul a suferit o abatere semnificativă.
+    Resetează unghiul senzorului gyro la 0 dacă valoarea acestuia depășește pragul.
+    Dacă unghiul depășește pragul, se emite un semnal sonor pentru avertizare.
+    Odată avertizat utilizatorul, la următoarea verificare, gyro va fi resetat.
     """
 
-    # Variabila de avertizare pentru semnalul sonor
-    warned = False
+    global warned  # Folosim variabila globală pentru a reține starea avertizării
 
-    # Verificăm dacă unghiul gyro depășește pragul
-    if abs(nemo.gyro.angle()) > threshold and not warned:
-        # Dacă abaterea este mai mare decât pragul și nu a fost deja emis un semnal sonor
-        ev3.speaker.beep()  # Emitere semnal sonor pentru avertizare
-        warned = True  # Setăm flag-ul warned la True pentru a nu emite un semnal sonor din nou
+    gyroAngle = abs(nemo.gyro.angle())  # Obținem valoarea absolută a unghiului gyro
 
-    # Dacă abaterea rămâne mai mare decât pragul și flag-ul warned este True, resetăm gyro
-    elif abs(nemo.gyro.angle()) > threshold and warned:
-        nemo.gyro.reset_angle(0)  # Resetăm unghiul gyro la 0 pentru a preveni o deriva permanentă
+    if gyroAngle > threshold:
+        if not warned:  # Dacă nu a fost emis deja un semnal sonor
+            ev3.speaker.beep()  # Emitere semnal sonor pentru avertizare
+            warned = True  # Setăm flag-ul warned la True pentru a evita semnalări repetate
+        else:
+            nemo.gyro.reset_angle(0)  # Resetăm unghiul gyro la 0
+            warned = False  # Resetăm flag-ul warned după resetare
 
-    # Dacă abaterea este sub prag, resetăm unghiul gyro
     else:
-        nemo.gyro.reset_angle(0)  # Resetăm unghiul gyro la 0 pentru a asigura o valoare corectă
+        nemo.gyro.reset_angle(0)
+        warned = False  # Dacă unghiul este sub prag, resetăm starea avertizării
 
+# Creăm un obiect Tool care conține funcția resetGyro
 tool01Obj = Tool(resetGyro, "Reset gyro")
 
+# Lista de unelte care include funcția de resetare a senzorului gyro
 toolList = [tool01Obj]
