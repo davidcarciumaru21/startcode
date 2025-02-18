@@ -118,9 +118,10 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
 
 # Lista de run-uri pe care robotul le poate face
 
-run01Obj = Mission(run01, "nimic")
-run02Obj = Mission(run02, "recif, rechin")
-run03Obj = Mission(run03, "recif")
-run04Obj = Mission(run04, "barca")
+run01Obj = Mission(run01, "nimic", Color.GREEN)
+run02Obj = Mission(run02, "recif, rechin", Color.YELLOW)
+run03Obj = Mission(run03, "recif", Color.WHITE)
+run04Obj = Mission(run04, "barca", Color.BLUE)
 
-runs = [run01Obj, run02Obj, run03Obj, run04Obj]
+blueRuns = [run01Obj, run02Obj]
+redRuns = [run03Obj, run04Obj]

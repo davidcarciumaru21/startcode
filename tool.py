@@ -1,5 +1,5 @@
 class Tool:
-    def __init__(self, tool: callable, name: str) -> None:
+    def __init__(self, tool: callable, name: str, colour: object) -> None:
         """
         Constructorul clasei tool.
 
@@ -9,6 +9,7 @@ class Tool:
         """
         self.tool = tool  # Atribuirea funcției sau metodei care reprezintă unealta
         self.name = name  # Atribuirea numelui sau descrierii uneltei
+        self.colour = colour
 
     def __str__(self) -> str:
         """

@@ -1,5 +1,7 @@
 from missions import ev3, nemo
 from tool import Tool
+from pybricks.parameters import Color
+from pybricks.tools import wait
 
 warned = False  # Variabilă globală care indică dacă s-a emis deja un semnal sonor
 
@@ -18,6 +20,7 @@ def resetGyro(threshold: int = 3) -> None:
         if not warned:  # Dacă nu a fost emis deja un semnal sonor
             ev3.speaker.beep()  # Emitere semnal sonor pentru avertizare
             warned = True  # Setăm flag-ul warned la True pentru a evita semnalări repetate
+            wait(100)
         else:
             nemo.gyro.reset_angle(0)  # Resetăm unghiul gyro la 0
             warned = False  # Resetăm flag-ul warned după resetare
@@ -27,7 +30,7 @@ def resetGyro(threshold: int = 3) -> None:
         warned = False  # Dacă unghiul este sub prag, resetăm starea avertizării
 
 # Creăm un obiect Tool care conține funcția resetGyro
-tool01Obj = Tool(resetGyro, "Reset gyro")
+tool01Obj = Tool(resetGyro, "Reset gyro", Color.RED)
 
 # Lista de unelte care include funcția de resetare a senzorului gyro
 toolList = [tool01Obj]

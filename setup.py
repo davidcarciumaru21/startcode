@@ -35,7 +35,7 @@ class Robot:
         self.bratSt = self.initMotor(Port.C, "Left arm motor")
 
         # Inițializarea senzorilor
-        self.touch = self.initSensor(TouchSensor, Port.S4, "Touch sensor")
+        self.colourBt = self.initSensor(ColorSensor, Port.S4, "Colour sensor button")
         self.gyro = self.initSensor(GyroSensor, Port.S1, "Gyro sensor")
         self.colourDr = self.initSensor(ColorSensor, Port.S2, "Colour sensor right")
         self.colourSt = self.initSensor(ColorSensor, Port.S3, "Colour sensor left")

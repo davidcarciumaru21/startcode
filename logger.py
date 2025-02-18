@@ -18,9 +18,6 @@ loger = DataLog('drAngle',
                 'bratstAngle',
                 'voltage',
                 'gyro',
-                'button',
-                'counterRun',
-                'runner',
                 name='log',
                 timestamp=False,
                 extension='csv',
@@ -32,7 +29,6 @@ loger = DataLog('drAngle',
 
 def logDataThread() -> None:
     while True:
-        counterFile = open("logrunCounterAndRunner.txt", "r")
         try:
             # Înregistrăm datele senzorilor și ale componentelor robotului
             loger.log(
@@ -42,10 +38,8 @@ def logDataThread() -> None:
                 nemo.bratSt.angle(),  # Unghiul brațului stâng
                 ev3.battery.voltage() / 1000,  # Tensiunea bateriei EV3 în volți
                 nemo.gyro.angle(),  # Unghiul gyro
-                nemo.touch.pressed(),  # Starea touch
-                counterFile.read(1),
-                counterFile.read(2)
             )
+            wait(100)
         except:
             # Dacă apare o eroare terminăm bucla
             break

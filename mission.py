@@ -8,10 +8,11 @@ class Mission:
     - data: un șir de caractere care conține datele relevante pentru misiune.
     """
     
-    def __init__(self, mission: callable, data: str) -> None:
+    def __init__(self, mission: callable, data: str, colour: object) -> None:
      
         self.mission = mission  # Atribuirea funcției sau metodei care reprezintă misiunea
         self.data = data  # Atribuirea datelor asociate misiunii
+        self.colour = colour
 
     def __str__(self) -> str:
     
