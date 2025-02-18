@@ -55,7 +55,7 @@ class Robot:
         self.motorList = [self.st, self.dr, self.bratSt, self.bratDr]
 
     # ************ INITIALIZATION ************
-    def initMotor(self, port: Port, name: str, direction=Direction.CLOCKWISE) -> Motor:
+    def initMotor(self, port: Port, name: str, direction=Direction.CLOCKWISE) -> object:
         """
         Inițializează un motor și gestionează erorile.
         """
@@ -108,6 +108,21 @@ class Robot:
         """
         self.dr.run(powerDr)
         self.st.run(powerSt)
+
+    def driveByCm(self, distance: int, speed: int) -> None:
+        """
+        Deplasează robotul pe o distanță specificată, calculând numărul necesar de grade pentru motoare.
+
+        distance: Distanța dorită în centimetri.
+        speed: Viteza motoarelor.
+        """
+
+        # Calculăm câte grade trebuie să rotească motoarele
+        degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+
+        # Pornim motoarele pentru a se roti numărul calculat de grade
+        self.st.run_angle(speed, degrees, Stop.BRAKE, wait=False)
+        self.dr.run_angle(speed, degrees, Stop.BRAKE, wait=True)
     
     def runDrUntilStalled(self, powerDr):
         self.dr.run_until_stalled(powerDr)
@@ -132,21 +147,6 @@ class Robot:
 
         # Pornim motorul pentru a se roti numărul calculat de grade
         self.motor.run_angle(speed, degrees, Stop.BRAKE)
-
-    def driveByCm(self, distance: int, speed: int) -> None:
-        """
-        Deplasează robotul pe o distanță specificată, calculând numărul necesar de grade pentru motoare.
-
-        distance: Distanța dorită în centimetri.
-        speed: Viteza motoarelor.
-        """
-
-        # Calculăm câte grade trebuie să rotească motoarele
-        degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
-
-        # Pornim motoarele pentru a se roti numărul calculat de grade
-        self.st.run_angle(speed, degrees, Stop.BRAKE, wait=False)
-        self.dr.run_angle(speed, degrees, Stop.BRAKE, wait=True)
 
     def runUntilStalledArms(self, power: int = 1000) -> None:
         """
@@ -319,7 +319,7 @@ class Robot:
 
         self.stopDriveTrain()
 
-        # ************ METHODS WITH COLOUR SENSORS ************
+    # ************ METHODS WITH COLOUR SENSORS ************
 
     def followLine(self, colour: object, sensor: object, power: int, target: int) -> None:
 

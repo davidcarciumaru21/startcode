@@ -30,7 +30,7 @@ loger = DataLog('drAngle',
 
 # Funcție pentru rularea unui thread care colectează și înregistrează date
 
-def logDataThread():
+def logDataThread() -> None:
     while True:
         counterFile = open("logrunCounterAndRunner.txt", "r")
         try:
