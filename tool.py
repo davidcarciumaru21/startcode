@@ -14,4 +14,4 @@ class Tool:
         """
         Returnează o reprezentare sub formă de str a obiectului Tool.
         """
-        return str(self.colour)  # Returnează culaorea tool-ului
+        return str(self.colour)  # Returnează culoarea tool-ului
