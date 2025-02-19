@@ -390,27 +390,49 @@ class Robot:
         # Oprește robotul după ce ambii senzori detectează linia
         self.stopDriveTrain()
 
-    def followLinePID(self, sensor: object, color: object, fallBack: int, distance: int, power: int, Kp: float, Ki: float, Kd: float) -> None:
-        initialDistance = self.dr.angle()  # Salvează distanța inițială
-        lastError = 0
-        integral = 0
+    def followLinePID(self, sensor: object, color: object, fallBack: int, distance: int,
+                      power: int, Kp: float, Ki: float, Kd: float) -> None:
+        """
+        Algoritm de urmărire a liniei folosind control PID.
+        
+        Parametri:
+        - sensor: obiectul senzorului de culoare utilizat pentru detectarea liniei.
+        - color: culoarea liniei pe care robotul trebuie să o urmărească.
+        - fallBack: valoarea de reflexie a luminii atunci când senzorul nu detectează culoarea dorită.
+        - distance: distanța pe care robotul trebuie să o parcurgă urmărind linia.
+        - power: puterea motoarelor în timpul deplasării.
+        - Kp: coeficientul proporțional pentru algoritmul PID.
+        - Ki: coeficientul integral pentru algoritmul PID.
+        - Kd: coeficientul derivativ pentru algoritmul PID.
+        """
+        
+        initialDistance = self.dr.angle()  # Salvează poziția inițială a robotului
+        lastError = 0  # Inițializează eroarea anterioară pentru componenta derivativă
+        integral = 0  # Inițializează suma erorilor pentru componenta integrală
 
+        # Execută bucla până când robotul parcurge distanța specificată
         while abs(self.dr.angle() - initialDistance) < distance:
             if sensor.color() == color:
-                referenceValue = sensor.reflection()  # Folosește valoarea reală când detectează culoarea
+                # Dacă senzorul detectează culoarea dorită, folosește valoarea reală a reflexiei
+                referenceValue = sensor.reflection()
             else:
-                referenceValue = fallBack  # Folosește valoarea fallback când senzorul nu detectează culoarea
+                # În caz contrar, folosește valoarea fallback pentru a evita erori mari
+                referenceValue = fallBack  
 
+            # Calculul erorii dintre valoarea de referință și valoarea curentă a reflexiei
             error = referenceValue - sensor.reflection()
-            integral += error
-            derivative = error - lastError
+            integral += error  # Actualizează suma erorilor pentru componenta integrală
+            derivative = error - lastError  # Calculează schimbarea erorii pentru componenta derivativă
+            
+            # Aplică formula PID pentru a calcula corecția
             correction = Kp * error + Ki * integral + Kd * derivative
-            lastError = error
+            lastError = error  # Stochează eroarea curentă pentru iterația următoare
 
+            # Ajustează viteza motoarelor pe baza corecției calculate
             self.drive(power + correction, power - correction)
 
+        # Oprește motoarele după finalizarea urmăririi liniei
         self.stopDriveTrain()
-
     # ************ MIXED METHODS ************
     def alignToLineMixed(self, angle: int, colour: object, power: int) -> None:
         """
