@@ -5,10 +5,11 @@
 from pybricks.ev3devices import TouchSensor
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
-from missions import redRuns, blueRuns, ev3, nemo 
+from missions import ev3, nemo 
 from logger import startLogging  
 import _thread
 from additionalTools import toolList
+from run import blueRuns, redRuns
 
 # ************ MAIN ************
 

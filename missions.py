@@ -9,7 +9,7 @@ from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
 from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
-from mission import Mission
+from run import Run
 
 from setup import Robot 
 
@@ -134,10 +134,7 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
 
 # Lista de run-uri pe care robotul le poate face
 
-run01Obj = Mission(run01, "nimic", Color.GREEN)
-run02Obj = Mission(run02, "recif, rechin", Color.YELLOW)
-run03Obj = Mission(run03, "recif", Color.WHITE)
-run04Obj = Mission(run04, "barca", Color.BLUE)
-
-blueRuns = []
-redRuns = [run01Obj, run02Obj, run03Obj, run04Obj]
+run01Obj = Run(run01, "nimic", Color.GREEN, "red")
+run02Obj = Run(run02, "recif, rechin", Color.YELLOW, "red")
+run03Obj = Run(run03, "recif", Color.WHITE, "red")
+run04Obj = Run(run04, "barca", Color.BLUE, "red")
