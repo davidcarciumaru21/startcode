@@ -25,8 +25,8 @@ class Robot:
         """
         Inițializează robotul cu dimensiunile roților și ecartamentul.
         """
-        self.WHEELDIAMETER = WHEELDIAMETER  # ! Constanta. Nu o modifica!
-        self.AXLETRACK = AXLETRACK  # ! Constanta. Nu o modifica!
+        self.WHEELDIAMETER = WHEELDIAMETER  #! Constanta. Nu o modifica!
+        self.AXLETRACK = AXLETRACK  #! Constanta. Nu o modifica!
 
         # Inițializarea motoarelor
         self.st = self.initMotor(Port.A, "Left motor", Direction.CLOCKWISE)
@@ -101,13 +101,6 @@ class Robot:
         """
         self.dr.run_angle(power, target, wait=False)  # Nu așteaptă finalizarea mișcării
         self.st.run_angle(power, target, wait=True)   # Așteaptă finalizarea mișcării
-
-    def drive(self, powerDr: int, powerSt: int) -> None:
-        """
-        Rulează motoarele continuu la viteze diferite.
-        """
-        self.dr.run(powerDr)
-        self.st.run(powerSt)
 
     def driveByCm(self, distance: int, speed: int) -> None:
         """
@@ -257,7 +250,7 @@ class Robot:
             # Calculul ieșirii PID (proporțional + integrativ + derivativ)
             output = Kp * error + Ki * integral + Kd * derivative
 
-            self.drive(-output, output)
+            self.d.drive(-output, output)
 
             previousError = error
 
@@ -288,10 +281,10 @@ class Robot:
 
             if currentAngle < 0:
                 # Dacă unghiul curent este negativ, facem robotul să vireze într-o direcție
-                self.drive(-power, power)
+                self.d.drive(-power, power)
             else:
                 # Dacă unghiul curent este pozitiv, facem robotul să vireze în direcția opusă
-                self.drive(power, -power)
+                self.d.drive(power, -power)
 
     def straightWithGyro(self, distance: int, power: int) -> None:
         """
@@ -312,7 +305,7 @@ class Robot:
                 break
 
             correction = self.gyro.angle() - previousAngle
-            self.drive(power - correction, power + correction)
+            self.d.drive(power - correction, power + correction)
             
             previousAngle = self.gyro.angle()
             previousDistanceTravelled = self.dr.angle()  
@@ -342,22 +335,22 @@ class Robot:
                 
             # Oprește robotul dacă s-a parcurs distanța dorită
             if distanceTravelled >= target and detectedColor == colour:
-                self.stopDriveTrain()()  # Oprește robotul după ce s-a atins distanța țintă
+                self.stopDriveTrain()  # Oprește robotul după ce s-a atins distanța țintă
                 break
                 
             detectedColor = sensor.color()  # Obține culoarea detectată de senzor
                 
             if detectedColor == colour:
                 # Dacă culoarea corectă este detectată, robotul merge înainte
-                self.drive(power, power)
+                self.d.drive(power, power)
             else:
                 # Dacă culoarea nu este detectată, robotul caută linia
-                self.drive(0, power)  # Se rotește spre dreapta
+                self.d.drive(0, power)  # Se rotește spre dreapta
                     
                 # Verifică din nou culoarea după rotație
                 detectedColor = sensor.color()
                 if detectedColor != colour:
-                    self.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei
+                    self.d.drive(power, 0)  # Se rotește spre stânga pentru a continua căutarea liniei
 
     def allignToLine(self, colour: object, power: int) -> None:
         """ 
@@ -370,22 +363,22 @@ class Robot:
 
         # Robotul se deplasează înainte până când unul dintre senzori detectează linia
         while self.colourDr.color() != colour and self.colourSt.color() != colour:
-            self.drive(power, power)
+            self.d.drive(power, power)
 
         # Oprește robotul pentru a face ajustări
-        self.stopDriveTrain()()
+        self.stopDriveTrain()
         
         # Verifică dacă senzorul drept a detectat linia primul
         if self.colourDr.color() == colour:
             # Mișcă doar roata stângă până când și senzorul stâng detectează linia
             while self.colourSt.color() != colour:
-                self.drive(0, power)
+                self.d.drive(0, power)
         
         # Verifică dacă senzorul stâng a detectat linia primul
         elif self.colourSt.color() == colour:
             # Mișcă doar roata dreaptă până când și senzorul drept detectează linia
             while self.colourDr.color() != colour:
-                self.drive(power, 0)
+                self.d.drive(power, 0)
         
         # Oprește robotul după ce ambii senzori detectează linia
         self.stopDriveTrain()
@@ -429,7 +422,7 @@ class Robot:
             lastError = error  # Stochează eroarea curentă pentru iterația următoare
 
             # Ajustează viteza motoarelor pe baza corecției calculate
-            self.drive(power + correction, power - correction)
+            self.d.drive(power + correction, power - correction)
 
         # Oprește motoarele după finalizarea urmăririi liniei
         self.stopDriveTrain()
@@ -446,7 +439,7 @@ class Robot:
         angleIncrementer = 1 
 
         while self.sensorDr.color() != colour and self.sensorSt.color() != colour:
-            self.drive(power, power)  # Ambele motoare merg înainte
+            self.d.drive(power, power)  # Ambele motoare merg înainte
 
         self.stopDriveTrain()  # Oprire pentru a evita depășirea liniei
 

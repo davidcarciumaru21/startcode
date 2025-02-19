@@ -4,7 +4,7 @@
 
 import time  # Importă modulul de gestionare a timpului
 from pybricks.tools import DataLog  # Importă funcționalitatea de înregistrare a datelor
-from missions import nemo, ev3  # Importă obiectele necesare pentru controlul robotului
+from globalValues import nemo, ev3  # Importă obiectele necesare pentru controlul robotului
 import _thread  # Importă modulul pentru a lucra cu fire de execuție
 from pybricks.hubs import EV3Brick  # Importă hub-ul EV3Brick
 from pybricks.tools import wait, StopWatch, DataLog  # Importă instrumente suplimentare pentru gestionarea timpului și înregistrarea datelor

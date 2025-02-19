@@ -45,3 +45,18 @@ class Run:
                 redMissions.append(self)
             case "blue":
                 blueMissions.append(self)
+
+    @classmethod
+    def registerMission(cls, color: object, base: str) -> callable:
+        """
+        Decorator pentru a înregistra automat o misiune în lista corespunzătoare.
+        
+        Parametri:
+        - description: Descrierea misiunii.
+        - color: Culoarea asociată misiunii.
+        - base: Baza de pornire ("red" sau "blue").
+        """
+        def decorator(func):
+            missionObj = cls(func, color, base)  # Creează un obiect Run
+            return func  # Returnează funcția originală fără modificări
+        return decorator

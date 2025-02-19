@@ -1,4 +1,4 @@
-from missions import ev3, nemo  # Importă obiectele necesare pentru controlul robotului
+from globalValues import ev3, nemo  # Importă obiectele necesare pentru controlul robotului
 from tool import Tool  # Importă clasa Tool pentru a crea un obiect Tool
 from pybricks.parameters import Color  # Importă enumerația pentru culori
 from pybricks.tools import wait  # Importă funcția wait pentru a adăuga pauze
