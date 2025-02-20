@@ -34,7 +34,7 @@ def displayBase() -> None:
     ) 
 
 while True:
-    _thread.start_new_thread(displayBase, ())
+    displayBase()
     detectedColour = nemo.colourBt.color()
     
     if base == "red":

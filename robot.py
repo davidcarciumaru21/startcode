@@ -266,8 +266,7 @@ class Robot:
         
         Parametri:
         - targetAngle: unghiul țintă la care robotul trebuie să ajungă (în grade).
-        - speed1: viteza motorului stâng.
-        - speed2: viteza motorului drept.
+        - power: viteza motoarelor.
         - tolerance: toleranța (în grade) față de unghiul țintă la care considerăm că am ajuns (implicit 1 grad).
         """
 
@@ -426,6 +425,7 @@ class Robot:
 
         # Oprește motoarele după finalizarea urmăririi liniei
         self.stopDriveTrain()
+
     # ************ MIXED METHODS ************
     def alignToLineMixed(self, angle: int, colour: object, power: int) -> None:
         """
@@ -453,3 +453,20 @@ class Robot:
             while self.sensorDr.color() != colour:
                 self.gotoGyro(angle - angleIncrementer, 300, 0)
                 angleIncrementer += 1  # Creștem ușor unghiul pentru o aliniere fină
+
+    # ************ Experimental ************
+
+    def selfDrive(self, begin: int, stop: int, speed: int, kp: float, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0) -> None:
+        while True:
+            x = self.d.distance() + 0
+            formulaUnghi = t1 + t2 * x + t3 * x ** 2 + t4 * x ** 3 + t5 * x ** 4 + t6 * x ** 5 + t7 * x ** 6
+            if x <= begin or x >= stop:
+                unghiDorit = 0
+            else:
+                unghiDorit = formulaUnghi
+            unghiGyro = self.gyro.angle()
+            eroare = unghiDorit - unghiGyro
+            corectie = kp * eroare
+            self.d.drive(speed, corectie)
+            if self.d.distance() >= stop:
+                break            

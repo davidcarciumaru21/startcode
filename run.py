@@ -1,4 +1,4 @@
-blueMRuns = []
+blueRuns = []
 redRuns = []
 
 class Run:
