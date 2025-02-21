@@ -42,9 +42,9 @@ class Run:
         """
         match self.base:
             case "red":
-                redMissions.append(self)
+                redRuns.append(self)
             case "blue":
-                blueMissions.append(self)
+                blueRuns.append(self)
 
     @classmethod
     def registerMission(cls, color: object, base: str) -> callable:
