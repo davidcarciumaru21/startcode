@@ -17,6 +17,7 @@ def displayBase() -> None:
     global base
     ev3.screen.clear()  # Clear the screen
 
+    # Afiseaza / selecteaza baza
     ev3.screen.draw_text(
         (ev3.screen.width - len(base) * 6) // 2,  
         ev3.screen.height // 2 - 20, 
@@ -24,6 +25,7 @@ def displayBase() -> None:
         Color.BLACK, None
     ) 
 
+    # Afiseaza unghiul gyro
     ev3.screen.draw_text(
         (ev3.screen.width - len(str(nemo.gyro.angle())) * 6) // 2,  
         ev3.screen.height // 2, 
