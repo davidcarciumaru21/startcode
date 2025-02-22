@@ -122,7 +122,7 @@ class Robot:
         _thread.start_new_thread(self.runDrUntilStalled, (powerDr,)) 
         _thread.start_new_thread(self.runStUntilStalled, (powerSt,)) 
 
-    def moveByCm(self, distance: int, speed: int, motor: object, diameter: float) -> None:
+    def moveByCm(self, distance: int, speed: int, motor: object) -> None:
         """
         Deplasează un motor pe o distanță specificată, calculând numărul necesar de grade pentru motor.
 
@@ -134,7 +134,21 @@ class Robot:
         degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
 
         # Pornim motorul pentru a se roti numărul calculat de grade
-        self.motor.run_angle(speed, degrees, Stop.BRAKE)
+        motor.run_angle(speed, degrees, Stop.BRAKE, wait=False)
+
+    def moveDriveTrainByCm(self, distance: int, speed: int) -> None:
+        """
+        Deplasează un motor pe o distanță specificată, calculând numărul necesar de grade pentru motor.
+
+        distance: Distanța dorită în centimetri.
+        speed: Viteza motoarelor.
+        """
+
+        # Calculăm câte grade trebuie să rotească motoarele
+        degrees = (distance * 360) / (math.pi * self.WHEELDIAMETER)
+
+        self.dr.run_angle(speed, degrees, Stop.BRAKE, wait=False)
+        self.st.run_angle(speed, degrees, Stop.BRAKE, wait=True)
 
     def runUntilStalledArms(self, power: int = 1000) -> None:
         """
@@ -420,6 +434,36 @@ class Robot:
 
         # Oprește motoarele după finalizarea urmăririi liniei
         self.stopDriveTrain()
+
+    def allignToLineSize(self, colour: object, power: int, size: int) -> None:
+        
+        # Robotul se deplasează înainte până când unul dintre senzori detectează linia
+        while self.colourDr.color() != colour and self.colourSt.color() != colour:
+            self.d.drive(power, power)
+
+        # Oprește robotul pentru a face ajustări
+        self.stopDriveTrain()
+        
+        # Verifică dacă senzorul drept a detectat linia primul
+        if self.colourDr.color() == colour:
+            # Mișcă doar roata stângă până când și senzorul stâng detectează linia
+            while self.colourSt.color() != colour:
+                self.d.drive(0, power)
+        
+        # Verifică dacă senzorul stâng a detectat linia primul
+        elif self.colourSt.color() == colour:
+            # Mișcă doar roata dreaptă până când și senzorul drept detectează linia
+            while self.colourDr.color() != colour:
+                self.d.drive(power, 0)
+        
+        # Oprește robotul după ce ambii senzori detectează linia
+        self.stopDriveTrain()
+
+        if self.colourDr.color() == colour and self.colourSt.color() == colour:
+            self.moveDriveTrainByCm(size, power)
+            if self.colourDr.color() == colour and self.colourSt.color() == colour:
+                # Oprește robotul după ce ambii senzori detectează linia
+                self.stopDriveTrain()
 
     # ************ MIXED METHODS ************
     def alignToLineMixed(self, angle: int, colour: object, power: int) -> None:

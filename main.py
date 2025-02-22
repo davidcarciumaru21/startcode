@@ -35,10 +35,10 @@ def displayBase() -> None:
 
 while True:
     try:
-        nemo.dr.stop()
-        nemo.st.stop()
+        for motor in nemo.motorList:
+            motor.stop()
     except:
-        pass
+        print("error stopping")
     displayBase()
     detectedColour = nemo.colourBt.color()
 
