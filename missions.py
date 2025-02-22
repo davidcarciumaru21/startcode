@@ -2,12 +2,8 @@
 
 # ************ IMPORTS ************
 
-from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
-                                 InfraredSensor, UltrasonicSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction, Button, Color
-from pybricks.tools import wait, StopWatch, DataLog
-from pybricks.robotics import DriveBase
+from pybricks.parameters import Color
+from pybricks.tools import wait
 
 from robot import Robot
 from run import Run 
@@ -27,9 +23,12 @@ nemo03.d.settings(800, 800, 400, 400)
 nemo04 = Robot(49.5, 115)
 nemo04.d.settings(2000, 2000, 2000, 2000)
 
+redRuns = []
+blueRuns = []
+
 # ************ RUNS ************
 
-@Run.registerMission(Color.GREEN, "red")
+@Run.registerMission(Color.GREEN, "red", redRuns)
 def run01(): #colectare stanga
     #nemo01.bratDr.run_angle(-1000, 200)
     nemo01.d.straight(450)
@@ -41,7 +40,7 @@ def run01(): #colectare stanga
     nemo01.d.straight(-5)
     nemo01.d.stop()
 
-@Run.registerMission(Color.YELLOW, "red")
+@Run.registerMission(Color.YELLOW, "red", redRuns)
 def run02(): #recif, rechin, scubi
     wait(200)
     nemo02.d.turn(5)
@@ -107,7 +106,7 @@ def run02(): #recif, rechin, scubi
     nemo02.d.straight(-700)
     nemo02.stopRobot()'''
 
-@Run.registerMission(Color.WHITE, "red")
+@Run.registerMission(Color.WHITE, "red",redRuns)
 def run03(): #catarg, dus rechin, nava, colectare trident si un crevete
     wait(200)
     nemo03.d.straight(190)
@@ -118,7 +117,7 @@ def run03(): #catarg, dus rechin, nava, colectare trident si un crevete
     nemo03.bratDr.run_angle(200, 280)
     nemo03.bratDr.run_angle(-200, 280)
 
-@Run.registerMission(Color.BLUE, "red")
+@Run.registerMission(Color.BLUE, "red", redRuns)
 def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     wait(200)
     nemo04.bratDr.run_angle(-1000, 280)

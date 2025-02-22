@@ -2,12 +2,11 @@
 
 # ************ IMPORTS ************
 
-from pybricks.ev3devices import TouchSensor
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
 from globalValues import ev3, nemo 
 from additionalTools import toolList
-from run import blueRuns, redRuns
+from missions import blueRuns, redRuns
 
 # ************ MAIN ************
 
@@ -34,18 +33,19 @@ def displayBase() -> None:
     ) 
 
 while True:
+    nemo.dr.stop()
+    nemo.st.stop()
     displayBase()
     detectedColour = nemo.colourBt.color()
 
-    match base:
-        case "red":
-            for run in redRuns:
-                if detectedColour == run.colour:
-                    run.mission()
-        case "blue":
-            for run in blueRuns:
-                if detectedColour == run.colour:
-                    run.mission()
+    if base ==  "red":
+        for run in redRuns:
+            if detectedColour == run.colour:
+                run.mission()
+    elif base == "blue":
+        for run in blueRuns:
+            if detectedColour == run.colour:
+                run.mission()
 
     for tool in toolList:
         if tool.colour == detectedColour:
