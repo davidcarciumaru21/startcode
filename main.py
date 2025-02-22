@@ -6,11 +6,12 @@ from pybricks.parameters import Button, Color
 from pybricks.tools import wait
 from globalValues import ev3, nemo 
 from additionalTools import toolList
-from missions import blueRuns, redRuns
+from missions import blueRuns, redRuns, greenRuns, runsList
 
 # ************ MAIN ************
 
 base = "red"
+counter = 1
 
 def displayBase() -> None:
     global base
@@ -33,8 +34,11 @@ def displayBase() -> None:
     ) 
 
 while True:
-    nemo.dr.stop()
-    nemo.st.stop()
+    try:
+        nemo.dr.stop()
+        nemo.st.stop()
+    except:
+        pass
     displayBase()
     detectedColour = nemo.colourBt.color()
 
@@ -46,15 +50,29 @@ while True:
         for run in blueRuns:
             if detectedColour == run.colour:
                 run.mission()
+    
+    elif base == "green":
+        for run in greenRuns:
+            if detectedColour == run.colour:
+                run.mission()
 
     for tool in toolList:
         if tool.colour == detectedColour:
             tool.tool()
 
-    if Button.RIGHT in ev3.buttons.pressed():
-        base = "blue" if base == "red" else base
+    if Button.RIGHT in ev3.buttons.pressed() and counter < len(runsList):
+        counter += 1
+        wait(100)
 
-    if Button.LEFT in ev3.buttons.pressed():
-        base = "red" if base == "blue" else base
+    if Button.LEFT in ev3.buttons.pressed() and counter > 1:
+        counter -= 1
+        wait(100)
+
+    if counter == 1:
+        base = "red"
+    elif counter == 2:
+        base = "blue"
+    elif counter == 3:
+        base = "green"
 
     wait(100)
