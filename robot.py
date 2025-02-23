@@ -3,7 +3,7 @@
 # ************ IMPORTS ************
 
 from pybricks.ev3devices import (Motor, ColorSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.parameters import Port, Stop, Direction
 from pybricks.robotics import DriveBase
 import _thread
 from errors import *

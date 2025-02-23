@@ -32,7 +32,7 @@ def resetGyro(threshold: int = 3) -> None:
         warned = False  # Resetăm flag-ul warned în caz că unghiul nu este suficient de mare
 
 # Creăm un obiect Tool care conține funcția resetGyro
-tool01Obj = Tool(resetGyro, Color.RED)
+tool01Obj = Tool(resetGyro, Color.BROWN)
 
 # Lista de unelte care include funcția de resetare a senzorului gyro
 toolList = [tool01Obj]  # Adăugăm uneltele într-o listă pentru a putea fi utilizate ulterior
