@@ -25,9 +25,6 @@ class Run:
         self.selectList()  # Adăugăm automat misiunea în lista corespunzătoare
 
     def selectList(self) -> None:
-        """
-        Adaugă obiectul misiunii în lista corespunzătoare (`redRuns` sau `blueRuns`).
-        """
         self.runList.append(self)  # Adaugă misiunea în lista specificată
 
     @classmethod

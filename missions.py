@@ -2,52 +2,58 @@
 
 # ************ IMPORTS ************
 
-from pybricks.parameters import Color, Stop
+from pybricks.parameters import Color
 from pybricks.tools import wait
 import _thread
-from globalValues import ev3
 
+from base import Base
 from robot import Robot
 from run import Run 
+from runner import Runner
+
+# ************ CONSTANTS ************
+
+WHEELDIAMETER = 49.5
+AXLETRACK = 115
 
 # ************ ROBOT OBJECTS ************
 
-nemo00 = Robot(49.5, 115)
+nemo00 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo00.d.settings(200, 200, 600, 600)
 
-nemo01 = Robot(49.5, 115)
+nemo01 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo01.d.settings(2000, 2000, 2000, 2000)
 
-nemo02 = Robot(49.5, 115)
+nemo02 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo02.d.settings(1000, 1000, 500, 500)
 
-nemo03 = Robot(49.5, 115)
+nemo03 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo03.d.settings(500, 300, 300, 300)
 
-nemo04 = Robot(49.5, 115)
+nemo04 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo04.d.settings(2000, 2000, 2000, 2000)
 
-nemo05 = Robot(49.5, 115)
+nemo05 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo05.d.settings(1000, 700, 700, 700)
 
-nemo06 = Robot(49.5, 115)
+nemo06 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo06.d.settings(800, 500, 500, 500)
 
-nemo07 = Robot(49.5, 115)
+nemo07 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo07.d.settings(700, 700, 700, 700)
 
-nemo08 = Robot(49.5, 115)
+nemo08 = Robot(WHEELDIAMETER, AXLETRACK)
 nemo08.d.settings(130, 130, 130, 130)
 
-redRuns = []
-blueRuns = []
-greenRuns = []
+# ************ RUNS OBJECTS ************
 
-runsList = [redRuns, blueRuns, greenRuns]
+redBase = Base("red")
+blueBase = Base("blue")
+bases = [redBase, blueBase]
 
 # ************ RUNS ************
 
-@Run.registerMission(Color.WHITE, redRuns)
+@Run.registerMission(Color.WHITE, redBase.missions)
 def run01(): #colectare stanga
      #nemo01.bratDr.run_angle(-1000, 200)
     nemo01.d.straight(450)
@@ -59,7 +65,7 @@ def run01(): #colectare stanga
     nemo01.d.straight(-5)
     nemo01.d.stop()
 
-@Run.registerMission(Color.BLUE, redRuns)
+@Run.registerMission(Color.BLUE, redBase.missions)
 def run02(): #recif, rechin, scubi
     wait(200)
     nemo02.d.turn(5)
@@ -127,7 +133,7 @@ def run02(): #recif, rechin, scubi
     nemo02.d.straight(-700)
     nemo02.stopRobot()'''
 
-@Run.registerMission(Color.GREEN,redRuns)
+@Run.registerMission(Color.GREEN, redBase.missions)
 def run03(): #catarg, dus rechin, nava, colectare trident si un crevete
     wait(200)
     nemo03.d.straight(190)
@@ -159,16 +165,12 @@ def run03(): #catarg, dus rechin, nava, colectare trident si un crevete
     nemo03.d.turn(-90)
     nemo03.d.straight(-400)
     
-    
-    
-    
     nemo03.d.turn(-40)
     nemo03.d.straight(-100)
     nemo03.d.turn(-60)
     nemo03.d.straight(-500)'''
     
-
-@Run.registerMission(Color.RED, redRuns)
+@Run.registerMission(Color.RED, redBase.missions)
 def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     wait(200)
     nemo04.bratDr.run_time(500, 500)
@@ -187,7 +189,7 @@ def run04():#barca, anglerfish, verde rotund, colectare dreapta, baza dreapta
     wait(100)
     nemo04.d.straight(440)
 
-@Run.registerMission(Color.WHITE, blueRuns)
+@Run.registerMission(Color.WHITE, blueBase.missions)
 def run05(): #colectare 
     nemo05.d.straight(100)
     nemo05.d.turn(-20)
@@ -204,7 +206,7 @@ def run05(): #colectare
     nemo05.d.turn(-100)
     nemo05.d.straight(-700)
     
-@Run.registerMission(Color.BLUE, blueRuns)
+@Run.registerMission(Color.BLUE, blueBase.missions)
 def run06(): #pinguin si sonar
     nemo06.d.straight(310)
     nemo06.d.turn(-25)
@@ -241,18 +243,14 @@ def run06(): #pinguin si sonar
     nemo06.d.straight(-500)
     nemo06.d.turn(10)
     '''
-    
 
-
-    
-
-@Run.registerMission(Color.GREEN, blueRuns)
+@Run.registerMission(Color.GREEN, blueBase.missions)
 def run07():
     nemo07.d.straight(400)
     nemo04.d.straight(-400)
     
 
-@Run.registerMission(Color.RED, blueRuns)
+@Run.registerMission(Color.RED, blueBase.missions)
 def run08():
     nemo08.d.straight(180)
     nemo01.d.straight(-140)
@@ -269,3 +267,8 @@ def threadBratDr(speed, angles):
 def threadBratSt(speed, angles):
     with globalLock:
         nemo07.bratSt.run_angle(speed, angles)
+
+# ************ RUNNER ************
+
+runner = Runner(redBase, bases)
+runner.run()
