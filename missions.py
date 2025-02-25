@@ -256,8 +256,6 @@ def run07():
 def run08():
     nemo08.d.straight(180)
     nemo01.d.straight(-140)
-    
-    
 
 globalLock = _thread.allocate_lock()
 
